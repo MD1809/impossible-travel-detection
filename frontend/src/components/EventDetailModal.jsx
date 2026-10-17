@@ -1,20 +1,12 @@
-import React, { useState } from 'react';
-import { X, ShieldAlert, MapPin, Clock, Gauge, Compass, Copy, Check } from 'lucide-react';
+import React from 'react';
+import { X, ShieldAlert, MapPin, Clock, Gauge, Compass } from 'lucide-react';
 
 export default function EventDetailModal({ eventId, eventDetail, onClose }) {
-  const [copied, setCopied] = useState(false);
-
   if (!eventDetail) return null;
 
   const current = eventDetail.currentAttempt || {};
   const ref = eventDetail.referenceAttempt || {};
   const metrics = eventDetail.metrics || {};
-
-  const handleCopyReport = () => {
-    navigator.clipboard.writeText(JSON.stringify(eventDetail, null, 2));
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
 
   const formatDateTime = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -27,10 +19,6 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
       year: 'numeric'
     });
   };
-
-  const speedRatio = (metrics.calculatedSpeedKmh && metrics.thresholdSpeedKmh)
-    ? (metrics.calculatedSpeedKmh / metrics.thresholdSpeedKmh).toFixed(1)
-    : null;
 
   return (
     <div style={{
@@ -84,14 +72,9 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
               <ShieldAlert size={22} color="#f87171" />
             </div>
             <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h3 style={{ fontSize: '1.1875rem', fontWeight: '800', color: '#f1f5f9' }}>
-                  Hồ sơ điều tra sự kiện #{eventDetail.id}
-                </h3>
-                <span className="badge badge-critical">
-                  {eventDetail.severity || 'CRITICAL'}
-                </span>
-              </div>
+              <h3 style={{ fontSize: '1.1875rem', fontWeight: '800', color: '#f1f5f9' }}>
+                Thông tin chi tiết
+              </h3>
               <p style={{ fontSize: '0.8125rem', color: '#94a3b8', marginTop: '2px' }}>
                 Tài khoản: <strong style={{ color: '#60a5fa' }}>{eventDetail.username}</strong>
               </p>
@@ -102,6 +85,7 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
             onClick={onClose}
             className="btn-secondary"
             style={{ padding: '8px', borderRadius: '8px' }}
+            title="Đóng"
           >
             <X size={18} />
           </button>
@@ -113,26 +97,16 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           border: '1px solid rgba(37, 99, 235, 0.3)',
           borderRadius: '8px',
           padding: '12px 16px',
-          marginBottom: '20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '8px'
+          marginBottom: '20px'
         }}>
-          <div>
-            <span style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Loại chặn
-            </span>
-            <div style={{ fontSize: '0.9375rem', fontWeight: '700', color: '#60a5fa', marginTop: '2px' }}>
-              {eventDetail.eventType === 'CONCURRENT_IMPOSSIBLE_TRAVEL'
-                ? 'Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản'
-                : 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn'}
-            </div>
-          </div>
-          <span className="badge badge-blocked" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-            {eventDetail.eventType}
+          <span style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            Loại chặn
           </span>
+          <div style={{ fontSize: '0.9375rem', fontWeight: '700', color: '#60a5fa', marginTop: '2px' }}>
+            {eventDetail.eventType === 'CONCURRENT_IMPOSSIBLE_TRAVEL'
+              ? 'Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản'
+              : 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn'}
+          </div>
         </div>
 
         {/* 2 Locations Comparison Cards */}
@@ -200,80 +174,34 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           background: '#1c2230',
           border: '1px solid #2d3748',
           borderRadius: '12px',
-          padding: '20px',
-          marginBottom: '22px'
+          padding: '20px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: '#fbbf24' }}>
             <Gauge size={18} />
             <h4 style={{ fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Kết quả tính toán Haversine
+              Kết quả tính toán
             </h4>
           </div>
 
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '14px',
-            marginBottom: '16px'
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '14px'
           }}>
-            <div style={{ background: '#151923', border: '1px solid #273142', padding: '12px', borderRadius: '8px' }}>
+            <div style={{ background: '#151923', border: '1px solid #273142', padding: '14px', borderRadius: '8px' }}>
               <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Khoảng cách</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f1f5f9', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f1f5f9', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
                 {metrics.distanceKm?.toLocaleString()} km
               </div>
             </div>
 
-            <div style={{ background: '#151923', border: '1px solid #273142', padding: '12px', borderRadius: '8px' }}>
+            <div style={{ background: '#151923', border: '1px solid #273142', padding: '14px', borderRadius: '8px' }}>
               <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Thời gian chênh lệch</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f1f5f9', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f1f5f9', fontFamily: 'var(--font-mono)', marginTop: '4px' }}>
                 {metrics.timeDiffSeconds} giây
               </div>
             </div>
-
-            <div style={{ background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.75rem', color: '#f87171' }}>Vận tốc tính toán</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ef4444', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-                {metrics.calculatedSpeedKmh > 1000000 ? '> 1.000.000 km/h' : `${metrics.calculatedSpeedKmh?.toLocaleString()} km/h`}
-              </div>
-            </div>
-
-            <div style={{ background: '#151923', border: '1px solid #273142', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Ngưỡng tốc độ</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#60a5fa', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-                {metrics.thresholdSpeedKmh} km/h
-              </div>
-            </div>
           </div>
-
-          <div style={{
-            background: 'rgba(239, 68, 68, 0.12)',
-            border: '1px solid rgba(239, 68, 68, 0.35)',
-            borderLeft: '4px solid #ef4444',
-            padding: '12px 14px',
-            borderRadius: '6px',
-            fontSize: '0.8125rem',
-            color: '#fca5a5'
-          }}>
-            <strong>Kết luận:</strong> Vận tốc tính toán vượt{' '}
-            <strong style={{ color: '#ffffff' }}>{speedRatio ? `${speedRatio} lần` : 'quá'}</strong> giới hạn vật lý của máy bay thương mại 900 km/h. Hệ thống đã kích hoạt luật an ninh{' '}
-            <code className="code-pill" style={{ color: '#f87171' }}>{eventDetail.eventType}</code> và thực thi lệnh <strong>Chặn truy cập</strong>.
-          </div>
-        </div>
-
-        {/* Footer Actions */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
-          <button
-            onClick={handleCopyReport}
-            className="btn-secondary"
-            style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap', flexShrink: 0 }}
-          >
-            {copied ? <Check size={15} color="#34d399" style={{ flexShrink: 0 }} /> : <Copy size={15} style={{ flexShrink: 0 }} />}
-            <span style={{ whiteSpace: 'nowrap' }}>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
-          </button>
-
-          <button onClick={onClose} className="btn-primary" style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
-            <span style={{ whiteSpace: 'nowrap' }}>Đóng</span>
-          </button>
         </div>
 
       </div>
