@@ -192,7 +192,7 @@ npm install
 npm run dev
 ```
 
-Truy cập Dashboard tại: `http://localhost:3000` (hoặc cổng được hiển thị bởi Vite).  
+Truy cập Dashboard tại: `http://localhost:5173` (hoặc cổng được hiển thị bởi Vite).  
 Hệ thống Frontend đã được cấu hình proxy tự động chuyển tiếp request `/api/*` về `http://localhost:8080`.
 
 ---
