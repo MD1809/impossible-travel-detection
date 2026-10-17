@@ -130,7 +130,7 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
                 : 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn'}
             </div>
           </div>
-          <span className="badge badge-blocked">
+          <span className="badge badge-blocked" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
             {eventDetail.eventType}
           </span>
         </div>

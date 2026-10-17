@@ -163,15 +163,15 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
               fontSize: '0.75rem',
               letterSpacing: '0.03em'
             }}>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Thời gian</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Tài khoản</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Loại vi phạm</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>IP truy cập</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Lộ trình di chuyển</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Khoảng cách và vận tốc</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Mức độ</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Trạng thái</th>
-              <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center' }}>Thao tác</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Thời gian</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Tài khoản</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Loại vi phạm</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>IP truy cập</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Lộ trình di chuyển</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Khoảng cách và vận tốc</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Mức độ</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Trạng thái</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center', whiteSpace: 'nowrap' }}>Thao tác</th>
             </tr>
           </thead>
           <tbody>
@@ -252,12 +252,12 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                   </td>
 
                   {/* Severity */}
-                  <td style={{ padding: '14px' }}>
+                  <td style={{ padding: '14px', whiteSpace: 'nowrap' }}>
                     {getSeverityBadge(event.severity)}
                   </td>
 
                   {/* Action Taken */}
-                  <td style={{ padding: '14px' }}>
+                  <td style={{ padding: '14px', whiteSpace: 'nowrap' }}>
                     <span className="badge badge-blocked">
                       {event.actionTaken || 'BLOCKED'}
                     </span>

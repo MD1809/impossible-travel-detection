@@ -25,7 +25,7 @@ export default function Header({ onRefresh, loading }) {
               <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#f1f5f9' }}>
                 IMPOSSIBLE TRAVEL DETECTION
               </h1>
-              <span className="badge badge-low">
+              <span className="badge badge-low" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
                 <span className="pulse-live"></span>
                 SOC ACTIVE
               </span>

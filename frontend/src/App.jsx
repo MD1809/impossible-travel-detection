@@ -265,13 +265,13 @@ export default function App() {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
               <thead>
                 <tr style={{ background: '#161b26', borderBottom: '1px solid #2d3748', color: '#94a3b8', fontSize: '0.75rem', letterSpacing: '0.03em' }}>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Tài khoản</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Session Token</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Địa chỉ IP</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Vị trí địa lý</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Tọa độ</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Thời điểm tạo</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Hoạt động cuối</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Tài khoản</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Session Token</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Địa chỉ IP</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Vị trí địa lý</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Tọa độ</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Thời điểm tạo</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Hoạt động cuối</th>
                 </tr>
               </thead>
               <tbody>
@@ -284,15 +284,15 @@ export default function App() {
                 ) : (
                   activeSessions.map((s) => (
                     <tr key={s.id} style={{ borderBottom: '1px solid #222a3a' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#222938'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                      <td style={{ padding: '12px 14px', fontWeight: '700', color: '#60a5fa' }}>{s.username}</td>
-                      <td style={{ padding: '12px 14px' }}><span className="code-pill">{s.sessionToken}</span></td>
-                      <td style={{ padding: '12px 14px', color: '#cbd5e1' }}>{s.ipAddress}</td>
-                      <td style={{ padding: '12px 14px', color: '#f1f5f9' }}>{s.city}, {s.country}</td>
-                      <td style={{ padding: '12px 14px', fontFamily: 'var(--font-mono)', color: '#94a3b8' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: '700', color: '#60a5fa', whiteSpace: 'nowrap' }}>{s.username}</td>
+                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}><span className="code-pill">{s.sessionToken}</span></td>
+                      <td style={{ padding: '12px 14px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{s.ipAddress}</td>
+                      <td style={{ padding: '12px 14px', color: '#f1f5f9', whiteSpace: 'nowrap' }}>{s.city}, {s.country}</td>
+                      <td style={{ padding: '12px 14px', fontFamily: 'var(--font-mono)', color: '#94a3b8', whiteSpace: 'nowrap' }}>
                         [{s.latitude?.toFixed(4)}, {s.longitude?.toFixed(4)}]
                       </td>
-                      <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{new Date(s.loginTime).toLocaleString('vi-VN')}</td>
-                      <td style={{ padding: '12px 14px', color: '#94a3b8' }}>{new Date(s.lastActivity).toLocaleString('vi-VN')}</td>
+                      <td style={{ padding: '12px 14px', color: '#94a3b8', whiteSpace: 'nowrap' }}>{new Date(s.loginTime).toLocaleString('vi-VN')}</td>
+                      <td style={{ padding: '12px 14px', color: '#94a3b8', whiteSpace: 'nowrap' }}>{new Date(s.lastActivity).toLocaleString('vi-VN')}</td>
                     </tr>
                   ))
                 )}
@@ -323,12 +323,12 @@ export default function App() {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
               <thead>
                 <tr style={{ background: '#161b26', borderBottom: '1px solid #2d3748', color: '#94a3b8', fontSize: '0.75rem', letterSpacing: '0.03em' }}>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Thời gian</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Tài khoản</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Địa chỉ IP</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Vị trí</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Hoạt động</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600' }}>Chi tiết</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Thời gian</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Tài khoản</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Địa chỉ IP</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Vị trí</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Hoạt động</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', whiteSpace: 'nowrap' }}>Chi tiết</th>
                   <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center', whiteSpace: 'nowrap' }}>Thao tác</th>
                 </tr>
               </thead>
@@ -342,11 +342,11 @@ export default function App() {
                 ) : (
                   loginHistory.map((h) => (
                     <tr key={h.id} style={{ borderBottom: '1px solid #222a3a' }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#222938'} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                      <td style={{ padding: '12px 14px', color: '#cbd5e1' }}>{new Date(h.loginTime).toLocaleString('vi-VN')}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: '700', color: '#60a5fa' }}>{h.username || 'unknown'}</td>
-                      <td style={{ padding: '12px 14px' }}><span className="code-pill">{h.ipAddress}</span></td>
-                      <td style={{ padding: '12px 14px', color: '#f1f5f9' }}>{h.city ? `${h.city}, ${h.country}` : 'Không xác định'}</td>
-                      <td style={{ padding: '12px 14px' }}>
+                      <td style={{ padding: '12px 14px', color: '#cbd5e1', whiteSpace: 'nowrap' }}>{new Date(h.loginTime).toLocaleString('vi-VN')}</td>
+                      <td style={{ padding: '12px 14px', fontWeight: '700', color: '#60a5fa', whiteSpace: 'nowrap' }}>{h.username || 'unknown'}</td>
+                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}><span className="code-pill">{h.ipAddress}</span></td>
+                      <td style={{ padding: '12px 14px', color: '#f1f5f9', whiteSpace: 'nowrap' }}>{h.city ? `${h.city}, ${h.country}` : 'Không xác định'}</td>
+                      <td style={{ padding: '12px 14px', whiteSpace: 'nowrap' }}>
                         {h.status === 'SUCCESS' && (
                           <span className="badge badge-allowed">ĐĂNG NHẬP</span>
                         )}

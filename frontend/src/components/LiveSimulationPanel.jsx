@@ -292,22 +292,23 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 background: isSuccess ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
                 border: `1px solid ${isSuccess ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap', flexShrink: 0 }}>
                     {isSuccess ? (
-                      <CheckCircle size={18} color="#34d399" />
+                      <CheckCircle size={18} color="#34d399" style={{ flexShrink: 0 }} />
                     ) : (
-                      <ShieldAlert size={18} color="#f87171" />
+                      <ShieldAlert size={18} color="#f87171" style={{ flexShrink: 0 }} />
                     )}
                     <strong style={{
                       fontSize: '0.875rem',
-                      color: isSuccess ? '#34d399' : '#f87171'
+                      color: isSuccess ? '#34d399' : '#f87171',
+                      whiteSpace: 'nowrap'
                     }}>
                       HTTP {result.status} {statusText}
                     </strong>
                   </div>
 
-                  <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                  <span style={{ fontSize: '0.75rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
                     {result.data?.message}
                   </span>
                 </div>
