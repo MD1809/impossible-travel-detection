@@ -245,33 +245,46 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
           </div>
 
           {/* Live Response Result Box */}
-          {result && (
-            <div style={{
-              marginTop: '16px',
-              padding: '16px',
-              borderRadius: '10px',
-              background: result.status === 200 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.12)',
-              border: `1px solid ${result.status === 200 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  {result.status === 200 ? (
-                    <CheckCircle size={18} color="#34d399" />
-                  ) : (
-                    <ShieldAlert size={18} color="#f87171" />
-                  )}
-                  <strong style={{
-                    fontSize: '0.875rem',
-                    color: result.status === 200 ? '#34d399' : '#f87171'
-                  }}>
-                    HTTP {result.status} {result.status === 200 ? 'OK - Cho phép truy cập' : result.status === 403 ? 'FORBIDDEN - Chặn do phát hiện di chuyển bất khả thi' : 'Lỗi'}
-                  </strong>
-                </div>
+          {result && (() => {
+            const isSuccess = (result.status >= 200 && result.status < 300) && result.data?.success !== false;
+            let statusText = 'Lỗi';
+            if (result.status === 201) {
+              statusText = 'CREATED - Đăng ký tài khoản thành công';
+            } else if (result.status === 200) {
+              statusText = 'OK - Cho phép truy cập';
+            } else if (result.status === 403) {
+              statusText = 'FORBIDDEN - Chặn do phát hiện di chuyển bất khả thi';
+            } else if (result.status === 401) {
+              statusText = 'UNAUTHORIZED - Sai thông tin xác thực';
+            }
 
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
-                  {result.data?.message}
-                </span>
-              </div>
+            return (
+              <div style={{
+                marginTop: '16px',
+                padding: '16px',
+                borderRadius: '10px',
+                background: isSuccess ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
+                border: `1px solid ${isSuccess ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {isSuccess ? (
+                      <CheckCircle size={18} color="#34d399" />
+                    ) : (
+                      <ShieldAlert size={18} color="#f87171" />
+                    )}
+                    <strong style={{
+                      fontSize: '0.875rem',
+                      color: isSuccess ? '#34d399' : '#f87171'
+                    }}>
+                      HTTP {result.status} {statusText}
+                    </strong>
+                  </div>
+
+                  <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                    {result.data?.message}
+                  </span>
+                </div>
 
               {/* Formatted JSON debug block */}
               <pre style={{
@@ -289,7 +302,8 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 {JSON.stringify(result.data, null, 2)}
               </pre>
             </div>
-          )}
+          );
+        })()}
         </>
       )}
     </div>
