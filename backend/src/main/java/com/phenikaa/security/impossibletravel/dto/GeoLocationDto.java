@@ -78,4 +78,57 @@ public class GeoLocationDto {
     public void setResolved(boolean resolved) {
         this.resolved = resolved;
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+        private String ipAddress;
+        private String city;
+        private String country;
+        private String countryCode;
+        private Double latitude;
+        private Double longitude;
+        private boolean resolved;
+
+        public Builder ipAddress(String ipAddress) {
+            this.ipAddress = ipAddress;
+            return this;
+        }
+
+        public Builder city(String city) {
+            this.city = city;
+            return this;
+        }
+
+        public Builder country(String country) {
+            this.country = country;
+            return this;
+        }
+
+        public Builder countryCode(String countryCode) {
+            this.countryCode = countryCode;
+            return this;
+        }
+
+        public Builder latitude(Double latitude) {
+            this.latitude = latitude;
+            return this;
+        }
+
+        public Builder longitude(Double longitude) {
+            this.longitude = longitude;
+            return this;
+        }
+
+        public Builder resolved(boolean resolved) {
+            this.resolved = resolved;
+            return this;
+        }
+
+        public GeoLocationDto build() {
+            return new GeoLocationDto(ipAddress, city, country, countryCode, latitude, longitude, resolved);
+        }
+    }
 }
