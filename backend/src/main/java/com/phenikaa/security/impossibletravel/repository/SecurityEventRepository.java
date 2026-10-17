@@ -14,6 +14,8 @@ public interface SecurityEventRepository extends JpaRepository<SecurityEvent, Lo
 
     Page<SecurityEvent> findAllByOrderByCreatedAtDesc(Pageable pageable);
 
+    Page<SecurityEvent> findBySeverityOrderByCreatedAtDesc(Severity severity, Pageable pageable);
+
     List<SecurityEvent> findByUserIdOrderByCreatedAtDesc(Long userId);
 
     long countBySeverity(Severity severity);
