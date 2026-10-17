@@ -23,21 +23,21 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
       ip: '161.185.160.93',
       city: 'New York, Hoa Kỳ',
       type: 'critical',
-      desc: 'Kịch bản 1: Đồng thời khi phiên Hà Nội đang mở'
+      desc: 'Đăng nhập điểm thứ 2'
     },
     {
       name: 'Tokyo',
       ip: '133.242.0.1',
       city: 'Tokyo, Nhật Bản',
       type: 'critical',
-      desc: 'Kịch bản 2: Tuần tự sau khi bấm Đăng xuất phiên'
+      desc: 'Đăng nhập điểm thứ 3'
     },
     {
       name: 'TP. Hồ Chí Minh',
       ip: '171.244.10.1',
       city: 'TP.HCM, Việt Nam',
       type: 'normal',
-      desc: 'Khoảng cách 1.138 km'
+      desc: 'Đăng nhập điểm thứ 4'
     }
   ];
 
@@ -107,7 +107,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               Mô phỏng đăng nhập
             </h3>
             <p style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
-              Kiểm tra các kịch bản Impossible Travel trực tiếp trên hệ thống
+              Truy cập từ nhiều địa chỉ IP trên thế giới
             </p>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 title="Đóng các phiên đang mở để thử Kịch bản 2 di chuyển tuần tự"
               >
                 <LogOut size={14} style={{ flexShrink: 0 }} />
-                <span style={{ whiteSpace: 'nowrap' }}>Đăng xuất phiên cũ</span>
+                <span style={{ whiteSpace: 'nowrap' }}>Đăng xuất phiên</span>
               </button>
 
               <button
@@ -313,24 +313,24 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                   </span>
                 </div>
 
-              {/* Formatted JSON debug block */}
-              <pre style={{
-                margin: 0,
-                padding: '12px',
-                background: '#12161f',
-                border: '1px solid #242c3c',
-                borderRadius: '6px',
-                fontSize: '0.75rem',
-                fontFamily: 'var(--font-mono)',
-                color: '#cbd5e1',
-                maxHeight: '180px',
-                overflowY: 'auto'
-              }}>
-                {JSON.stringify(result.data, null, 2)}
-              </pre>
-            </div>
-          );
-        })()}
+                {/* Formatted JSON debug block */}
+                <pre style={{
+                  margin: 0,
+                  padding: '12px',
+                  background: '#12161f',
+                  border: '1px solid #242c3c',
+                  borderRadius: '6px',
+                  fontSize: '0.75rem',
+                  fontFamily: 'var(--font-mono)',
+                  color: '#cbd5e1',
+                  maxHeight: '180px',
+                  overflowY: 'auto'
+                }}>
+                  {JSON.stringify(result.data, null, 2)}
+                </pre>
+              </div>
+            );
+          })()}
         </>
       )}
     </div>

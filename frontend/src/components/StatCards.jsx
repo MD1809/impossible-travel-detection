@@ -21,18 +21,18 @@ export default function StatCards({ summary }) {
       icon: CheckCircle2,
       iconColor: '#34d399',
       iconBg: 'rgba(16, 185, 129, 0.15)',
-      subtitle: 'Vận tốc an toàn dưới 900 km/h',
+      subtitle: 'Tổng truy cập hợp lệ',
       badge: 'Hợp lệ',
       badgeClass: 'badge-allowed'
     },
     {
       id: 'blocked',
-      title: 'IMPOSSIBLE TRAVEL',
+      title: 'TRUY CẬP BỊ CHẶN',
       value: summary?.blockedLogins ?? 0,
       icon: ShieldAlert,
       iconColor: '#f87171',
       iconBg: 'rgba(239, 68, 68, 0.15)',
-      subtitle: 'Vượt ngưỡng tốc độ quy định',
+      subtitle: 'Tổng số lần bị chặn',
       badge: 'Bị chặn',
       badgeClass: 'badge-blocked'
     },
