@@ -26,7 +26,7 @@ public class SecurityConfig {
             .cors(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/health", "/api/auth/**", "/api/dashboard/**", "/api/security-events/**", "/api/sessions/**").permitAll()
+                .requestMatchers("/api/health/**", "/api/auth/**", "/api/dashboard/**", "/api/security-events/**", "/api/sessions/**").permitAll()
                 .anyRequest().authenticated()
             );
 
