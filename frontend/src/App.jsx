@@ -351,7 +351,18 @@ export default function App() {
                           <span style={{ color: '#94a3b8' }}>{h.failureReason || 'Đã kết thúc phiên'}</span>
                         )}
                         {h.status === 'BLOCKED' && (
-                          <span style={{ color: '#f87171', fontWeight: '500' }}>{h.failureReason || 'Phát hiện di chuyển bất khả thi'}</span>
+                          <span style={{ color: '#f87171', fontWeight: '500' }}>
+                            {(() => {
+                              const r = h.failureReason || '';
+                              if (r.includes('đồng thời') || r.includes('CONCURRENT')) {
+                                return 'Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản';
+                              }
+                              if (r.includes('khoảng cách') || r.includes('nối tiếp') || r.includes('bất khả thi') || r.includes('SEQUENTIAL') || r.includes('thời gian')) {
+                                return 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn';
+                              }
+                              return r || 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn';
+                            })()}
+                          </span>
                         )}
                         {h.status === 'FAILED' && (
                           <span style={{ color: '#fbbf24', fontWeight: '500' }}>{h.failureReason || 'Sai thông tin xác thực'}</span>

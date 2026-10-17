@@ -105,8 +105,15 @@ public class AuthService {
         DetectionResultDto detection = impossibleTravelEngine.evaluate(user.getId(), location, now);
 
         if (detection.isBlocked()) {
+            // Xác định thông tin khi bị chặn trong Nhật ký hoạt động:
+            // Kịch bản 1: Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản
+            // Kịch bản 2: Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn
+            String blockedReason = (detection.getEventType() == EventType.CONCURRENT_IMPOSSIBLE_TRAVEL)
+                    ? "Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản"
+                    : "Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn";
+
             // Ghi nhận Lịch sử đăng nhập bị chặn
-            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, detection.getReason());
+            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason);
 
             // Lưu sự kiện an ninh vào bảng security_events
             SecurityEvent event = new SecurityEvent();
