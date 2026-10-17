@@ -122,7 +122,11 @@ public class AuthService {
             event.setRefTime(detection.getRefTime());
             event.setDistanceKm(detection.getDistanceKm());
             event.setTimeDiffMinutes(detection.getTimeDiffMinutes());
-            event.setCalculatedSpeedKmh(detection.getCalculatedSpeedKmh());
+            Double safeSpeed = detection.getCalculatedSpeedKmh();
+            if (safeSpeed != null && (Double.isInfinite(safeSpeed) || Double.isNaN(safeSpeed) || safeSpeed > 99999999.0)) {
+                safeSpeed = 99999999.0;
+            }
+            event.setCalculatedSpeedKmh(safeSpeed);
             event.setThresholdSpeedKmh(detection.getThresholdSpeedKmh());
             event.setSeverity(detection.getSeverity());
             event.setActionTaken("BLOCKED");
@@ -153,7 +157,7 @@ public class AuthService {
 
             details.put("distanceKm", detection.getDistanceKm());
             details.put("timeDifferenceMinutes", detection.getTimeDiffMinutes());
-            details.put("calculatedSpeedKmh", detection.getCalculatedSpeedKmh());
+            details.put("calculatedSpeedKmh", safeSpeed);
             details.put("thresholdSpeedKmh", detection.getThresholdSpeedKmh());
             details.put("action", "BLOCKED");
 
