@@ -72,7 +72,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
   };
 
   return (
-    <div className="glass-card" style={{ padding: '22px', marginBottom: '28px', border: '1px solid #e2e8f0' }}>
+    <div className="glass-card" style={{ padding: '22px', marginBottom: '28px' }}>
       {/* Top Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: isExpanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -80,19 +80,19 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             width: '36px',
             height: '36px',
             borderRadius: '8px',
-            background: '#e0f2fe',
+            background: 'rgba(37, 99, 235, 0.15)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid #bae6fd'
+            border: '1px solid rgba(37, 99, 235, 0.35)'
           }}>
-            <Zap size={20} color="#0284c7" />
+            <Zap size={20} color="#60a5fa" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: '800', color: '#0f172a' }}>
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: '800', color: '#f1f5f9' }}>
               Mô phỏng đăng nhập
             </h3>
-            <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
+            <p style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
               Kiểm tra các kịch bản Impossible Travel trực tiếp trên hệ thống
             </p>
           </div>
@@ -127,8 +127,8 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 style={{
                   padding: '12px 14px',
                   borderRadius: '10px',
-                  background: preset.type === 'critical' ? '#fef2f2' : '#f0fdf4',
-                  border: `1px solid ${preset.type === 'critical' ? '#fecaca' : '#bbf7d0'}`,
+                  background: preset.type === 'critical' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(16, 185, 129, 0.1)',
+                  border: `1px solid ${preset.type === 'critical' ? 'rgba(239, 68, 68, 0.35)' : 'rgba(16, 185, 129, 0.35)'}`,
                   textAlign: 'left',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s'
@@ -137,16 +137,16 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <strong style={{
                     fontSize: '0.8125rem',
-                    color: preset.type === 'critical' ? '#dc2626' : '#16a34a'
+                    color: preset.type === 'critical' ? '#f87171' : '#34d399'
                   }}>
                     {preset.name}
                   </strong>
-                  <span style={{ fontSize: '0.725rem', color: '#64748b' }}>{preset.city}</span>
+                  <span style={{ fontSize: '0.725rem', color: '#94a3b8' }}>{preset.city}</span>
                 </div>
-                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#0284c7', marginBottom: '4px' }}>
+                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#60a5fa', marginBottom: '4px' }}>
                   IP: {preset.ip}
                 </div>
-                <div style={{ fontSize: '0.725rem', color: '#64748b' }}>
+                <div style={{ fontSize: '0.725rem', color: '#94a3b8' }}>
                   {preset.desc}
                 </div>
               </button>
@@ -160,21 +160,21 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             gap: '12px',
             flexWrap: 'wrap',
             padding: '14px',
-            background: '#f8fafc',
+            background: '#151923',
             borderRadius: '10px',
-            border: '1px solid #e2e8f0'
+            border: '1px solid #2d3748'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Tài khoản:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Tài khoản:</span>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
+                  background: '#1c2230',
+                  border: '1px solid #2d3748',
                   borderRadius: '6px',
-                  color: '#0f172a',
+                  color: '#f1f5f9',
                   padding: '6px 10px',
                   fontSize: '0.8125rem',
                   width: '120px'
@@ -183,16 +183,16 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Mật khẩu:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Mật khẩu:</span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
+                  background: '#1c2230',
+                  border: '1px solid #2d3748',
                   borderRadius: '6px',
-                  color: '#0f172a',
+                  color: '#f1f5f9',
                   padding: '6px 10px',
                   fontSize: '0.8125rem',
                   width: '130px'
@@ -201,17 +201,17 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Địa chỉ IP:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>Địa chỉ IP:</span>
               <input
                 type="text"
                 value={ipAddress}
                 onChange={(e) => setIpAddress(e.target.value)}
                 placeholder="Ví dụ: 161.185.160.93"
                 style={{
-                  background: '#ffffff',
-                  border: '1px solid #cbd5e1',
+                  background: '#1c2230',
+                  border: '1px solid #2d3748',
                   borderRadius: '6px',
-                  color: '#0284c7',
+                  color: '#60a5fa',
                   fontFamily: 'var(--font-mono)',
                   padding: '6px 10px',
                   fontSize: '0.8125rem',
@@ -250,25 +250,25 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               marginTop: '16px',
               padding: '16px',
               borderRadius: '10px',
-              background: result.status === 200 ? '#f0fdf4' : '#fef2f2',
-              border: `1px solid ${result.status === 200 ? '#bbf7d0' : '#fecaca'}`
+              background: result.status === 200 ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.12)',
+              border: `1px solid ${result.status === 200 ? 'rgba(16, 185, 129, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {result.status === 200 ? (
-                    <CheckCircle size={18} color="#16a34a" />
+                    <CheckCircle size={18} color="#34d399" />
                   ) : (
-                    <ShieldAlert size={18} color="#dc2626" />
+                    <ShieldAlert size={18} color="#f87171" />
                   )}
                   <strong style={{
                     fontSize: '0.875rem',
-                    color: result.status === 200 ? '#15803d' : '#b91c1c'
+                    color: result.status === 200 ? '#34d399' : '#f87171'
                   }}>
                     HTTP {result.status} {result.status === 200 ? 'OK - Cho phép truy cập' : result.status === 403 ? 'FORBIDDEN - Chặn do phát hiện di chuyển bất khả thi' : 'Lỗi'}
                   </strong>
                 </div>
 
-                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
+                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
                   {result.data?.message}
                 </span>
               </div>
@@ -277,12 +277,12 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               <pre style={{
                 margin: 0,
                 padding: '12px',
-                background: '#ffffff',
-                border: '1px solid #e2e8f0',
+                background: '#12161f',
+                border: '1px solid #242c3c',
                 borderRadius: '6px',
                 fontSize: '0.75rem',
                 fontFamily: 'var(--font-mono)',
-                color: '#334155',
+                color: '#cbd5e1',
                 maxHeight: '180px',
                 overflowY: 'auto'
               }}>

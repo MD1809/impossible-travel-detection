@@ -12,17 +12,17 @@ export default function Header({ onRefresh, loading }) {
             width: '44px',
             height: '44px',
             borderRadius: '10px',
-            background: '#e0f2fe',
-            border: '1px solid #bae6fd',
+            background: 'rgba(37, 99, 235, 0.15)',
+            border: '1px solid rgba(37, 99, 235, 0.35)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
           }}>
-            <Shield size={24} color="#0284c7" />
+            <Shield size={24} color="#60a5fa" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#0f172a' }}>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#f1f5f9' }}>
                 IMPOSSIBLE TRAVEL DETECTION
               </h1>
               <span className="badge badge-low">
@@ -30,7 +30,7 @@ export default function Header({ onRefresh, loading }) {
                 SOC ACTIVE
               </span>
             </div>
-            <p style={{ fontSize: '0.8125rem', color: '#64748b', marginTop: '2px' }}>
+            <p style={{ fontSize: '0.8125rem', color: '#94a3b8', marginTop: '2px' }}>
               Hệ thống giám sát an ninh và phát hiện bất thường di chuyển địa lý
             </p>
           </div>
@@ -43,20 +43,20 @@ export default function Header({ onRefresh, loading }) {
             alignItems: 'center',
             gap: '12px',
             padding: '6px 14px',
-            background: '#f8fafc',
+            background: '#151923',
             borderRadius: '8px',
-            border: '1px solid #e2e8f0',
+            border: '1px solid #2d3748',
             fontSize: '0.8125rem',
-            color: '#475569'
+            color: '#94a3b8'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Cpu size={15} color="#0284c7" />
-              <span>Thuật toán: <strong style={{ color: '#0284c7' }}>Haversine R=6371km</strong></span>
+              <Cpu size={15} color="#60a5fa" />
+              <span>Thuật toán: <strong style={{ color: '#93c5fd' }}>Haversine R=6371km</strong></span>
             </div>
-            <span style={{ color: '#cbd5e1' }}>|</span>
+            <span style={{ color: '#334155' }}>|</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Radio size={15} color="#d97706" />
-              <span>Ngưỡng: <strong style={{ color: '#d97706' }}>900 km/h</strong></span>
+              <Radio size={15} color="#fbbf24" />
+              <span>Ngưỡng: <strong style={{ color: '#fcd34d' }}>900 km/h</strong></span>
             </div>
           </div>
 

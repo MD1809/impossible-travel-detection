@@ -8,8 +8,8 @@ export default function StatCards({ summary }) {
       title: 'TỔNG LẦN ĐĂNG NHẬP',
       value: summary?.totalLogins ?? 0,
       icon: Activity,
-      iconColor: '#0284c7',
-      iconBg: '#e0f2fe',
+      iconColor: '#60a5fa',
+      iconBg: 'rgba(37, 99, 235, 0.15)',
       subtitle: 'Toàn bộ yêu cầu đăng nhập',
       badge: 'Tất cả',
       badgeClass: 'badge-low'
@@ -19,8 +19,8 @@ export default function StatCards({ summary }) {
       title: 'ĐĂNG NHẬP HỢP LỆ',
       value: summary?.allowedLogins ?? 0,
       icon: CheckCircle2,
-      iconColor: '#16a34a',
-      iconBg: '#dcfce7',
+      iconColor: '#34d399',
+      iconBg: 'rgba(16, 185, 129, 0.15)',
       subtitle: 'Vận tốc an toàn dưới 900 km/h',
       badge: 'Hợp lệ',
       badgeClass: 'badge-allowed'
@@ -30,8 +30,8 @@ export default function StatCards({ summary }) {
       title: 'IMPOSSIBLE TRAVEL',
       value: summary?.blockedLogins ?? 0,
       icon: ShieldAlert,
-      iconColor: '#dc2626',
-      iconBg: '#fee2e2',
+      iconColor: '#f87171',
+      iconBg: 'rgba(239, 68, 68, 0.15)',
       subtitle: 'Vượt ngưỡng tốc độ quy định',
       badge: 'Bị chặn',
       badgeClass: 'badge-blocked'
@@ -41,8 +41,8 @@ export default function StatCards({ summary }) {
       title: 'PHIÊN HOẠT ĐỘNG',
       value: summary?.activeSessions ?? 0,
       icon: Users,
-      iconColor: '#2563eb',
-      iconBg: '#dbeafe',
+      iconColor: '#38bdf8',
+      iconBg: 'rgba(56, 189, 248, 0.15)',
       subtitle: 'Phiên đang kết nối hệ thống',
       badge: 'Trực tuyến',
       badgeClass: 'badge-low'
@@ -76,7 +76,7 @@ export default function StatCards({ summary }) {
                   fontSize: '0.75rem',
                   fontWeight: '700',
                   letterSpacing: '0.04em',
-                  color: '#64748b',
+                  color: '#94a3b8',
                   textTransform: 'uppercase'
                 }}>
                   {stat.title}
@@ -98,7 +98,7 @@ export default function StatCards({ summary }) {
               <div style={{
                 fontSize: '2.25rem',
                 fontWeight: '800',
-                color: '#0f172a',
+                color: '#f1f5f9',
                 fontFamily: 'var(--font-mono)',
                 letterSpacing: '-0.03em',
                 lineHeight: 1.1,
@@ -113,10 +113,10 @@ export default function StatCards({ summary }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               paddingTop: '12px',
-              borderTop: '1px solid #f1f5f9',
+              borderTop: '1px solid #273142',
               fontSize: '0.75rem'
             }}>
-              <span style={{ color: '#64748b' }}>{stat.subtitle}</span>
+              <span style={{ color: '#94a3b8' }}>{stat.subtitle}</span>
               <span className={`badge ${stat.badgeClass}`}>{stat.badge}</span>
             </div>
           </div>
