@@ -5,7 +5,7 @@ import { DashboardApi } from '../services/api';
 export default function LiveSimulationPanel({ onSimulationComplete }) {
   const [username, setUsername] = useState('student01');
   const [password, setPassword] = useState('Password@123');
-  const [ipAddress, setIpAddress] = useState('113.160.224.1');
+  const [ipAddress, setIpAddress] = useState('118.70.128.1');
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
   const [isExpanded, setIsExpanded] = useState(true);
@@ -13,28 +13,28 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
   const presets = [
     {
       name: 'Hà Nội',
-      ip: '113.160.224.1',
+      ip: '118.70.128.1',
       city: 'Hà Nội, Việt Nam',
       type: 'normal',
       desc: 'Đăng nhập điểm gốc'
     },
     {
       name: 'New York',
-      ip: '161.185.160.93',
+      ip: '128.122.1.1',
       city: 'New York, Hoa Kỳ',
       type: 'critical',
       desc: 'Đăng nhập điểm thứ 2'
     },
     {
       name: 'Tokyo',
-      ip: '133.242.0.1',
+      ip: '220.100.0.1',
       city: 'Tokyo, Nhật Bản',
       type: 'critical',
       desc: 'Đăng nhập điểm thứ 3'
     },
     {
       name: 'TP. Hồ Chí Minh',
-      ip: '171.244.10.1',
+      ip: '1.53.255.1',
       city: 'TP.HCM, Việt Nam',
       type: 'normal',
       desc: 'Đăng nhập điểm thứ 4'
@@ -221,7 +221,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 type="text"
                 value={ipAddress}
                 onChange={(e) => setIpAddress(e.target.value)}
-                placeholder="Ví dụ: 161.185.160.93"
+                placeholder="Ví dụ: 128.122.1.1"
                 style={{
                   background: '#1c2230',
                   border: '1px solid #2d3748',
