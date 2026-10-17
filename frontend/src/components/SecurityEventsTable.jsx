@@ -139,7 +139,9 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                     background: isSelected ? '#2563eb' : '#232a3b',
                     borderColor: isSelected ? '#2563eb' : '#354157',
                     color: isSelected ? '#ffffff' : '#94a3b8',
-                    transition: 'all 0.15s ease'
+                    transition: 'all 0.15s ease',
+                    whiteSpace: 'nowrap',
+                    flexShrink: 0
                   }}
                 >
                   {sev}
@@ -262,15 +264,15 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                   </td>
 
                   {/* Action Button */}
-                  <td style={{ padding: '14px', textAlign: 'center' }}>
+                  <td style={{ padding: '14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                     <button
                       onClick={() => onSelectEvent(event.id)}
                       className="btn-secondary"
-                      style={{ padding: '5px 12px', fontSize: '0.75rem' }}
+                      style={{ padding: '5px 12px', fontSize: '0.75rem', whiteSpace: 'nowrap', flexShrink: 0 }}
                       title="Xem chi tiết tọa độ và tính toán"
                     >
-                      <Eye size={13} />
-                      Chi tiết
+                      <Eye size={13} style={{ flexShrink: 0 }} />
+                      <span style={{ whiteSpace: 'nowrap' }}>Chi tiết</span>
                     </button>
                   </td>
                 </tr>
@@ -295,20 +297,22 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
             onClick={() => onPageChange(currentPage - 1)}
             disabled={currentPage === 0}
             className="btn-secondary"
-            style={{ padding: '6px 12px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer', opacity: currentPage === 0 ? 0.4 : 1 }}
+            style={{ padding: '6px 12px', cursor: currentPage === 0 ? 'not-allowed' : 'pointer', opacity: currentPage === 0 ? 0.4 : 1, whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            <ChevronLeft size={14} /> Trước
+            <ChevronLeft size={14} style={{ flexShrink: 0 }} />
+            <span style={{ whiteSpace: 'nowrap' }}>Trước</span>
           </button>
-          <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
+          <span style={{ fontSize: '0.8125rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
             Trang <strong style={{ color: '#f1f5f9' }}>{currentPage + 1}</strong> / {totalPages}
           </span>
           <button
             onClick={() => onPageChange(currentPage + 1)}
             disabled={currentPage >= totalPages - 1}
             className="btn-secondary"
-            style={{ padding: '6px 12px', cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer', opacity: currentPage >= totalPages - 1 ? 0.4 : 1 }}
+            style={{ padding: '6px 12px', cursor: currentPage >= totalPages - 1 ? 'not-allowed' : 'pointer', opacity: currentPage >= totalPages - 1 ? 0.4 : 1, whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            Sau <ChevronRight size={14} />
+            <span style={{ whiteSpace: 'nowrap' }}>Sau</span>
+            <ChevronRight size={14} style={{ flexShrink: 0 }} />
           </button>
         </div>
       )}

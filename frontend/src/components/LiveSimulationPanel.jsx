@@ -115,9 +115,9 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
         <button
           onClick={() => setIsExpanded(!isExpanded)}
           className="btn-secondary"
-          style={{ padding: '5px 12px', fontSize: '0.75rem' }}
+          style={{ padding: '5px 12px', fontSize: '0.75rem', whiteSpace: 'nowrap', flexShrink: 0 }}
         >
-          {isExpanded ? 'Thu gọn' : 'Mở rộng'}
+          <span style={{ whiteSpace: 'nowrap' }}>{isExpanded ? 'Thu gọn' : 'Mở rộng'}</span>
         </button>
       </div>
 
@@ -148,19 +148,20 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                   transition: 'all 0.2s'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px', whiteSpace: 'nowrap', gap: '8px' }}>
                   <strong style={{
                     fontSize: '0.8125rem',
-                    color: preset.type === 'critical' ? '#f87171' : '#34d399'
+                    color: preset.type === 'critical' ? '#f87171' : '#34d399',
+                    whiteSpace: 'nowrap'
                   }}>
                     {preset.name}
                   </strong>
-                  <span style={{ fontSize: '0.725rem', color: '#94a3b8' }}>{preset.city}</span>
+                  <span style={{ fontSize: '0.725rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>{preset.city}</span>
                 </div>
-                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#60a5fa', marginBottom: '4px' }}>
+                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#60a5fa', marginBottom: '4px', whiteSpace: 'nowrap' }}>
                   IP: {preset.ip}
                 </div>
-                <div style={{ fontSize: '0.725rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.725rem', color: '#94a3b8', lineHeight: '1.4' }}>
                   {preset.desc}
                 </div>
               </button>
@@ -234,37 +235,37 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto' }}>
+            <div style={{ display: 'flex', gap: '8px', marginLeft: 'auto', flexWrap: 'wrap' }}>
               <button
                 onClick={handleRegisterUser}
                 disabled={loading}
                 className="btn-secondary"
-                style={{ fontSize: '0.78125rem', padding: '6px 12px' }}
+                style={{ fontSize: '0.78125rem', padding: '6px 12px', whiteSpace: 'nowrap', flexShrink: 0 }}
                 title="Đăng ký tài khoản nếu chưa có"
               >
-                <UserPlus size={14} />
-                Tạo tài khoản
+                <UserPlus size={14} style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>Tạo tài khoản</span>
               </button>
 
               <button
                 onClick={handleLogoutAll}
                 disabled={loading}
                 className="btn-secondary"
-                style={{ fontSize: '0.78125rem', padding: '6px 12px' }}
+                style={{ fontSize: '0.78125rem', padding: '6px 12px', whiteSpace: 'nowrap', flexShrink: 0 }}
                 title="Đóng các phiên đang mở để thử Kịch bản 2 di chuyển tuần tự"
               >
-                <LogOut size={14} />
-                Đăng xuất phiên cũ
+                <LogOut size={14} style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>Đăng xuất phiên cũ</span>
               </button>
 
               <button
                 onClick={() => handleRunLogin()}
                 disabled={loading}
                 className="btn-primary"
-                style={{ fontSize: '0.78125rem', padding: '6px 14px' }}
+                style={{ fontSize: '0.78125rem', padding: '6px 14px', whiteSpace: 'nowrap', flexShrink: 0 }}
               >
-                <Play size={14} />
-                {loading ? 'Đang gửi...' : 'Đăng nhập'}
+                <Play size={14} style={{ flexShrink: 0 }} />
+                <span style={{ whiteSpace: 'nowrap' }}>{loading ? 'Đang gửi...' : 'Đăng nhập'}</span>
               </button>
             </div>
           </div>

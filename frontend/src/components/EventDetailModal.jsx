@@ -265,14 +265,14 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           <button
             onClick={handleCopyReport}
             className="btn-secondary"
-            style={{ fontSize: '0.8125rem' }}
+            style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            {copied ? <Check size={15} color="#34d399" /> : <Copy size={15} />}
-            <span>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
+            {copied ? <Check size={15} color="#34d399" style={{ flexShrink: 0 }} /> : <Copy size={15} style={{ flexShrink: 0 }} />}
+            <span style={{ whiteSpace: 'nowrap' }}>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
           </button>
 
-          <button onClick={onClose} className="btn-primary" style={{ fontSize: '0.8125rem' }}>
-            Đóng
+          <button onClick={onClose} className="btn-primary" style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap', flexShrink: 0 }}>
+            <span style={{ whiteSpace: 'nowrap' }}>Đóng</span>
           </button>
         </div>
 

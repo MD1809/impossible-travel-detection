@@ -193,6 +193,16 @@ body {
   animation: pulse-emerald 2s infinite;
 }
 
+/* All Buttons - single line, no text wrapping */
+button, input[type="button"], input[type="submit"] {
+  white-space: nowrap !important;
+  word-break: keep-all;
+}
+
+button > span, button > strong, .btn-primary > *, .btn-secondary > * {
+  white-space: nowrap;
+}
+
 /* Ocean Blue Buttons */
 .btn-primary {
   display: inline-flex;
@@ -208,6 +218,7 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25);
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
@@ -229,6 +240,7 @@ body {
   border: 1px solid #354157;
   cursor: pointer;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .btn-secondary:hover {

@@ -218,7 +218,8 @@ export default function App() {
             border: activeTab === 'history' ? '1px solid rgba(37, 99, 235, 0.4)' : '1px solid transparent',
             background: activeTab === 'history' ? 'rgba(37, 99, 235, 0.18)' : 'transparent',
             color: activeTab === 'history' ? '#60a5fa' : '#94a3b8',
-            transition: 'all 0.15s ease'
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
           }}
         >
           <History size={16} />
@@ -242,7 +243,8 @@ export default function App() {
             border: activeTab === 'sessions' ? '1px solid rgba(37, 99, 235, 0.4)' : '1px solid transparent',
             background: activeTab === 'sessions' ? 'rgba(37, 99, 235, 0.18)' : 'transparent',
             color: activeTab === 'sessions' ? '#60a5fa' : '#94a3b8',
-            transition: 'all 0.15s ease'
+            transition: 'all 0.15s ease',
+            whiteSpace: 'nowrap'
           }}
         >
           <Users size={16} />
@@ -327,7 +329,7 @@ export default function App() {
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Vị trí</th>
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Hoạt động</th>
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Chi tiết</th>
-                  <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center' }}>Thao tác</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center', whiteSpace: 'nowrap' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
@@ -389,7 +391,7 @@ export default function App() {
                           <span style={{ color: '#94a3b8' }}>{h.failureReason || '—'}</span>
                         )}
                       </td>
-                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                      <td style={{ padding: '12px 14px', textAlign: 'center', whiteSpace: 'nowrap' }}>
                         {h.status === 'BLOCKED' ? (
                           <button
                             onClick={() => handleOpenDetail(h)}
@@ -405,7 +407,9 @@ export default function App() {
                               background: 'rgba(37, 99, 235, 0.15)',
                               border: '1px solid rgba(37, 99, 235, 0.35)',
                               cursor: 'pointer',
-                              transition: 'all 0.15s ease'
+                              transition: 'all 0.15s ease',
+                              whiteSpace: 'nowrap',
+                              flexShrink: 0
                             }}
                             onMouseEnter={(e) => {
                               e.currentTarget.style.background = '#2563eb';
@@ -416,8 +420,8 @@ export default function App() {
                               e.currentTarget.style.color = '#60a5fa';
                             }}
                           >
-                            <Eye size={13} />
-                            <span>Chi tiết</span>
+                            <Eye size={13} style={{ flexShrink: 0 }} />
+                            <span style={{ whiteSpace: 'nowrap' }}>Chi tiết</span>
                           </button>
                         ) : (
                           <span style={{ color: '#475569' }}>—</span>

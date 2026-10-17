@@ -64,10 +64,10 @@ export default function Header({ onRefresh, loading }) {
             onClick={onRefresh}
             disabled={loading}
             className="btn-primary"
-            style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
+            style={{ cursor: loading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', flexShrink: 0 }}
           >
-            <RefreshCw size={15} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-            <span>{loading ? 'Đang cập nhật' : 'Làm mới'}</span>
+            <RefreshCw size={15} style={{ animation: loading ? 'spin 1s linear infinite' : 'none', flexShrink: 0 }} />
+            <span style={{ whiteSpace: 'nowrap' }}>{loading ? 'Đang cập nhật' : 'Làm mới'}</span>
           </button>
         </div>
 
