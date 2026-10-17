@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, RefreshCw, Activity, Radio, Cpu } from 'lucide-react';
+import { Shield, RefreshCw, Cpu, Radio } from 'lucide-react';
 
 export default function Header({ onRefresh, loading }) {
   return (
@@ -9,30 +9,29 @@ export default function Header({ onRefresh, loading }) {
         {/* Left: Branding & Status */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <div style={{
-            width: '46px',
-            height: '46px',
-            borderRadius: '12px',
-            background: 'linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(2, 132, 199, 0.3))',
-            border: '1px solid rgba(56, 189, 248, 0.4)',
+            width: '44px',
+            height: '44px',
+            borderRadius: '10px',
+            background: '#e0f2fe',
+            border: '1px solid #bae6fd',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 0 20px rgba(6, 182, 212, 0.3)'
+            justifyContent: 'center'
           }}>
-            <Shield size={26} color="#38bdf8" />
+            <Shield size={24} color="#0284c7" />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#f8fafc' }}>
+              <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: '#0f172a' }}>
                 IMPOSSIBLE TRAVEL DETECTION
               </h1>
-              <span className="badge badge-low" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+              <span className="badge badge-low">
                 <span className="pulse-live"></span>
                 SOC ACTIVE
               </span>
             </div>
-            <p style={{ fontSize: '0.8125rem', color: '#94a3b8', marginTop: '2px' }}>
-              Trung tâm giám sát An ninh Không gian mạng & Phát hiện Bất thường Di chuyển Địa lý
+            <p style={{ fontSize: '0.8125rem', color: '#64748b', marginTop: '2px' }}>
+              Hệ thống giám sát an ninh và phát hiện bất thường di chuyển địa lý
             </p>
           </div>
         </div>
@@ -44,20 +43,20 @@ export default function Header({ onRefresh, loading }) {
             alignItems: 'center',
             gap: '12px',
             padding: '6px 14px',
-            background: 'rgba(15, 23, 42, 0.6)',
+            background: '#f8fafc',
             borderRadius: '8px',
-            border: '1px solid rgba(148, 163, 184, 0.1)',
+            border: '1px solid #e2e8f0',
             fontSize: '0.8125rem',
-            color: '#cbd5e1'
+            color: '#475569'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Cpu size={15} color="#38bdf8" />
-              <span>Engine: <strong style={{ color: '#38bdf8' }}>Haversine R=6371km</strong></span>
+              <Cpu size={15} color="#0284c7" />
+              <span>Thuật toán: <strong style={{ color: '#0284c7' }}>Haversine R=6371km</strong></span>
             </div>
-            <span style={{ color: 'rgba(148, 163, 184, 0.3)' }}>|</span>
+            <span style={{ color: '#cbd5e1' }}>|</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <Radio size={15} color="#f59e0b" />
-              <span>Ngưỡng: <strong style={{ color: '#f59e0b' }}>900 km/h</strong></span>
+              <Radio size={15} color="#d97706" />
+              <span>Ngưỡng: <strong style={{ color: '#d97706' }}>900 km/h</strong></span>
             </div>
           </div>
 
@@ -67,8 +66,8 @@ export default function Header({ onRefresh, loading }) {
             className="btn-primary"
             style={{ cursor: loading ? 'not-allowed' : 'pointer' }}
           >
-            <RefreshCw size={16} className={loading ? 'spin-animation' : ''} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-            <span>{loading ? 'Đang cập nhật...' : 'Làm mới dữ liệu'}</span>
+            <RefreshCw size={15} style={{ animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+            <span>{loading ? 'Đang cập nhật' : 'Làm mới'}</span>
           </button>
         </div>
 

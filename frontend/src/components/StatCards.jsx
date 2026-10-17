@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, CheckCircle2, ShieldAlert, Users, TrendingUp } from 'lucide-react';
+import { Activity, CheckCircle2, ShieldAlert, Users } from 'lucide-react';
 
 export default function StatCards({ summary }) {
   const stats = [
@@ -8,45 +8,44 @@ export default function StatCards({ summary }) {
       title: 'TỔNG LẦN ĐĂNG NHẬP',
       value: summary?.totalLogins ?? 0,
       icon: Activity,
-      color: '#38bdf8',
-      bgColor: 'rgba(56, 189, 248, 0.1)',
-      borderColor: 'rgba(56, 189, 248, 0.3)',
-      subtitle: 'Toàn bộ yêu cầu đăng nhập vào hệ thống',
-      badge: 'All Requests'
+      iconColor: '#0284c7',
+      iconBg: '#e0f2fe',
+      subtitle: 'Toàn bộ yêu cầu đăng nhập',
+      badge: 'Tất cả',
+      badgeClass: 'badge-low'
     },
     {
       id: 'allowed',
       title: 'ĐĂNG NHẬP HỢP LỆ',
       value: summary?.allowedLogins ?? 0,
       icon: CheckCircle2,
-      color: '#10b981',
-      bgColor: 'rgba(16, 185, 129, 0.1)',
-      borderColor: 'rgba(16, 185, 129, 0.3)',
-      subtitle: 'Vận tốc an toàn (≤ 900 km/h)',
-      badge: 'Allowed (200 OK)'
+      iconColor: '#16a34a',
+      iconBg: '#dcfce7',
+      subtitle: 'Vận tốc an toàn dưới 900 km/h',
+      badge: 'Hợp lệ',
+      badgeClass: 'badge-allowed'
     },
     {
       id: 'blocked',
-      title: 'CẢNH BÁO IMPOSSIBLE TRAVEL',
+      title: 'IMPOSSIBLE TRAVEL',
       value: summary?.blockedLogins ?? 0,
       icon: ShieldAlert,
-      color: '#f43f5e',
-      bgColor: 'rgba(244, 63, 94, 0.12)',
-      borderColor: 'rgba(244, 63, 94, 0.4)',
-      glow: '0 0 25px rgba(244, 63, 94, 0.25)',
-      subtitle: 'Bị chặn tức thì (> 900 km/h hoặc tức thời)',
-      badge: 'Blocked (403 Forbidden)'
+      iconColor: '#dc2626',
+      iconBg: '#fee2e2',
+      subtitle: 'Vượt ngưỡng tốc độ quy định',
+      badge: 'Bị chặn',
+      badgeClass: 'badge-blocked'
     },
     {
       id: 'active',
-      title: 'PHIÊN HOẠT ĐỘNG TRỰC TUYẾN',
+      title: 'PHIÊN HOẠT ĐỘNG',
       value: summary?.activeSessions ?? 0,
       icon: Users,
-      color: '#06b6d4',
-      bgColor: 'rgba(6, 182, 212, 0.1)',
-      borderColor: 'rgba(6, 182, 212, 0.3)',
-      subtitle: 'Phiên Active dùng để đối chiếu đồng thời',
-      badge: 'Live Sessions'
+      iconColor: '#2563eb',
+      iconBg: '#dbeafe',
+      subtitle: 'Phiên đang kết nối hệ thống',
+      badge: 'Trực tuyến',
+      badgeClass: 'badge-low'
     }
   ];
 
@@ -64,58 +63,48 @@ export default function StatCards({ summary }) {
             key={stat.id}
             className="glass-card"
             style={{
-              padding: '20px 22px',
+              padding: '22px 24px',
               position: 'relative',
-              overflow: 'hidden',
-              boxShadow: stat.glow || 'var(--shadow-md)',
-              border: `1px solid ${stat.borderColor}`
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
             }}
           >
-            {/* Top decorative accent light */}
-            <div style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              right: 0,
-              height: '3px',
-              background: `linear-gradient(90deg, transparent, ${stat.color}, transparent)`
-            }} />
-
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
-              <div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '14px' }}>
                 <span style={{
                   fontSize: '0.75rem',
                   fontWeight: '700',
-                  letterSpacing: '0.06em',
-                  color: '#94a3b8',
+                  letterSpacing: '0.04em',
+                  color: '#64748b',
                   textTransform: 'uppercase'
                 }}>
                   {stat.title}
                 </span>
+
                 <div style={{
-                  fontSize: '2.25rem',
-                  fontWeight: '800',
-                  color: '#f8fafc',
-                  fontFamily: 'var(--font-mono)',
-                  letterSpacing: '-0.03em',
-                  marginTop: '4px'
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
+                  background: stat.iconBg,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
                 }}>
-                  {stat.value.toLocaleString()}
+                  <IconComponent size={20} color={stat.iconColor} />
                 </div>
               </div>
 
               <div style={{
-                width: '44px',
-                height: '44px',
-                borderRadius: '12px',
-                background: stat.bgColor,
-                border: `1px solid ${stat.borderColor}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: stat.color
+                fontSize: '2.25rem',
+                fontWeight: '800',
+                color: '#0f172a',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+                marginBottom: '10px'
               }}>
-                <IconComponent size={22} />
+                {stat.value.toLocaleString()}
               </div>
             </div>
 
@@ -124,22 +113,11 @@ export default function StatCards({ summary }) {
               alignItems: 'center',
               justifyContent: 'space-between',
               paddingTop: '12px',
-              borderTop: '1px solid rgba(148, 163, 184, 0.1)',
-              fontSize: '0.78125rem',
-              color: '#94a3b8'
+              borderTop: '1px solid #f1f5f9',
+              fontSize: '0.75rem'
             }}>
-              <span>{stat.subtitle}</span>
-              <span style={{
-                padding: '2px 8px',
-                borderRadius: '6px',
-                fontSize: '0.7rem',
-                fontWeight: '600',
-                background: stat.bgColor,
-                color: stat.color,
-                border: `1px solid ${stat.borderColor}`
-              }}>
-                {stat.badge}
-              </span>
+              <span style={{ color: '#64748b' }}>{stat.subtitle}</span>
+              <span className={`badge ${stat.badgeClass}`}>{stat.badge}</span>
             </div>
           </div>
         );

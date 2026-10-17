@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Zap, Shield, AlertTriangle, CheckCircle, Terminal, UserPlus, Globe } from 'lucide-react';
+import { Play, Zap, CheckCircle, ShieldAlert, UserPlus } from 'lucide-react';
 import { DashboardApi } from '../services/api';
 
 export default function LiveSimulationPanel({ onSimulationComplete }) {
@@ -12,34 +12,30 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
 
   const presets = [
     {
-      name: '1. Hà Nội (Hợp lệ)',
+      name: 'Hà Nội',
       ip: '113.160.224.1',
-      city: 'Hà Nội, VN',
-      expected: '200 OK (Allowed)',
+      city: 'Hà Nội, Việt Nam',
       type: 'normal',
       desc: 'Đăng nhập điểm gốc'
     },
     {
-      name: '2. New York (Đồng thời)',
+      name: 'New York',
       ip: '161.185.160.93',
-      city: 'New York, US',
-      expected: '403 Blocked (Concurrent)',
+      city: 'New York, Hoa Kỳ',
       type: 'critical',
       desc: 'Khoảng cách 13.125 km ngay sau phiên Hà Nội'
     },
     {
-      name: '3. TP. Hồ Chí Minh',
+      name: 'TP. Hồ Chí Minh',
       ip: '171.244.10.1',
-      city: 'TP.HCM, VN',
-      expected: 'Đánh giá vận tốc',
-      type: 'warning',
+      city: 'TP.HCM, Việt Nam',
+      type: 'normal',
       desc: 'Khoảng cách 1.138 km'
     },
     {
-      name: '4. Tokyo (Bất khả thi)',
+      name: 'Tokyo',
       ip: '133.242.0.1',
-      city: 'Tokyo, JP',
-      expected: '403 Blocked (Sequential)',
+      city: 'Tokyo, Nhật Bản',
       type: 'critical',
       desc: 'Khoảng cách 3.650 km sau vài giây'
     }
@@ -76,7 +72,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
   };
 
   return (
-    <div className="glass-card" style={{ padding: '22px', marginBottom: '28px', border: '1px solid rgba(56, 189, 248, 0.25)' }}>
+    <div className="glass-card" style={{ padding: '22px', marginBottom: '28px', border: '1px solid #e2e8f0' }}>
       {/* Top Banner */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: isExpanded ? '18px' : '0' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -84,20 +80,20 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             width: '36px',
             height: '36px',
             borderRadius: '8px',
-            background: 'linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(6, 182, 212, 0.3))',
+            background: '#e0f2fe',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: '1px solid rgba(56, 189, 248, 0.4)'
+            border: '1px solid #bae6fd'
           }}>
-            <Zap size={20} color="#38bdf8" />
+            <Zap size={20} color="#0284c7" />
           </div>
           <div>
-            <h3 style={{ fontSize: '1.0625rem', fontWeight: '800', color: '#f8fafc' }}>
-              MÔ PHỎNG ĐĂNG NHẬP & KIỂM THỬ TẤN CÔNG (LIVE TEST CONSOLE)
+            <h3 style={{ fontSize: '1.0625rem', fontWeight: '800', color: '#0f172a' }}>
+              Mô phỏng đăng nhập
             </h3>
-            <p style={{ fontSize: '0.78125rem', color: '#94a3b8' }}>
-              Kiểm tra tức thời 2 Kịch bản Impossible Travel trực tiếp từ giao diện điều khiển
+            <p style={{ fontSize: '0.8125rem', color: '#64748b' }}>
+              Kiểm tra các kịch bản Impossible Travel trực tiếp trên hệ thống
             </p>
           </div>
         </div>
@@ -107,13 +103,13 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
           className="btn-secondary"
           style={{ padding: '5px 12px', fontSize: '0.75rem' }}
         >
-          {isExpanded ? 'Thu gọn console' : 'Mở rộng console'}
+          {isExpanded ? 'Thu gọn' : 'Mở rộng'}
         </button>
       </div>
 
       {isExpanded && (
         <>
-          {/* Quick 1-Click Attack / Normal Presets */}
+          {/* Quick 1-Click Presets */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
@@ -131,38 +127,26 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 style={{
                   padding: '12px 14px',
                   borderRadius: '10px',
-                  background: preset.type === 'critical'
-                    ? 'rgba(225, 29, 72, 0.12)'
-                    : preset.type === 'warning'
-                    ? 'rgba(245, 158, 11, 0.1)'
-                    : 'rgba(16, 185, 129, 0.1)',
-                  border: `1px solid ${
-                    preset.type === 'critical'
-                      ? 'rgba(225, 29, 72, 0.4)'
-                      : preset.type === 'warning'
-                      ? 'rgba(245, 158, 11, 0.35)'
-                      : 'rgba(16, 185, 129, 0.35)'
-                  }`,
+                  background: preset.type === 'critical' ? '#fef2f2' : '#f0fdf4',
+                  border: `1px solid ${preset.type === 'critical' ? '#fecaca' : '#bbf7d0'}`,
                   textAlign: 'left',
                   cursor: loading ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s',
-                  position: 'relative',
-                  overflow: 'hidden'
+                  transition: 'all 0.2s'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
                   <strong style={{
                     fontSize: '0.8125rem',
-                    color: preset.type === 'critical' ? '#fda4af' : preset.type === 'warning' ? '#fcd34d' : '#86efac'
+                    color: preset.type === 'critical' ? '#dc2626' : '#16a34a'
                   }}>
                     {preset.name}
                   </strong>
-                  <span style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{preset.city}</span>
+                  <span style={{ fontSize: '0.725rem', color: '#64748b' }}>{preset.city}</span>
                 </div>
-                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#38bdf8', marginBottom: '4px' }}>
+                <div style={{ fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: '#0284c7', marginBottom: '4px' }}>
                   IP: {preset.ip}
                 </div>
-                <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>
+                <div style={{ fontSize: '0.725rem', color: '#64748b' }}>
                   {preset.desc}
                 </div>
               </button>
@@ -176,22 +160,22 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             gap: '12px',
             flexWrap: 'wrap',
             padding: '14px',
-            background: 'rgba(15, 23, 42, 0.7)',
+            background: '#f8fafc',
             borderRadius: '10px',
-            border: '1px solid rgba(148, 163, 184, 0.12)'
+            border: '1px solid #e2e8f0'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Username:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Tài khoản:</span>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 style={{
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  background: '#ffffff',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '6px',
-                  color: '#fff',
-                  padding: '5px 10px',
+                  color: '#0f172a',
+                  padding: '6px 10px',
                   fontSize: '0.8125rem',
                   width: '120px'
                 }}
@@ -199,17 +183,17 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>Password:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Mật khẩu:</span>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 style={{
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  background: '#ffffff',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '6px',
-                  color: '#fff',
-                  padding: '5px 10px',
+                  color: '#0f172a',
+                  padding: '6px 10px',
                   fontSize: '0.8125rem',
                   width: '130px'
                 }}
@@ -217,19 +201,19 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>IP Address:</span>
+              <span style={{ fontSize: '0.8125rem', color: '#475569' }}>Địa chỉ IP:</span>
               <input
                 type="text"
                 value={ipAddress}
                 onChange={(e) => setIpAddress(e.target.value)}
                 placeholder="Ví dụ: 161.185.160.93"
                 style={{
-                  background: 'rgba(30, 41, 59, 0.8)',
-                  border: '1px solid rgba(148, 163, 184, 0.2)',
+                  background: '#ffffff',
+                  border: '1px solid #cbd5e1',
                   borderRadius: '6px',
-                  color: '#38bdf8',
+                  color: '#0284c7',
                   fontFamily: 'var(--font-mono)',
-                  padding: '5px 10px',
+                  padding: '6px 10px',
                   fontSize: '0.8125rem',
                   width: '140px'
                 }}
@@ -242,10 +226,10 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 disabled={loading}
                 className="btn-secondary"
                 style={{ fontSize: '0.78125rem', padding: '6px 12px' }}
-                title="Đăng ký tài khoản nếu chưa có trong DB"
+                title="Đăng ký tài khoản nếu chưa có"
               >
                 <UserPlus size={14} />
-                Tạo user test
+                Tạo tài khoản
               </button>
 
               <button
@@ -255,7 +239,7 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
                 style={{ fontSize: '0.78125rem', padding: '6px 14px' }}
               >
                 <Play size={14} />
-                {loading ? 'Đang gửi...' : 'Gửi yêu cầu đăng nhập'}
+                {loading ? 'Đang gửi...' : 'Đăng nhập'}
               </button>
             </div>
           </div>
@@ -266,35 +250,25 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               marginTop: '16px',
               padding: '16px',
               borderRadius: '10px',
-              background: result.status === 200
-                ? 'rgba(16, 185, 129, 0.08)'
-                : result.status === 403
-                ? 'rgba(225, 29, 72, 0.12)'
-                : 'rgba(245, 158, 11, 0.1)',
-              border: `1px solid ${
-                result.status === 200
-                  ? 'rgba(16, 185, 129, 0.4)'
-                  : result.status === 403
-                  ? 'rgba(225, 29, 72, 0.5)'
-                  : 'rgba(245, 158, 11, 0.4)'
-              }`
+              background: result.status === 200 ? '#f0fdf4' : '#fef2f2',
+              border: `1px solid ${result.status === 200 ? '#bbf7d0' : '#fecaca'}`
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   {result.status === 200 ? (
-                    <CheckCircle size={18} color="#10b981" />
+                    <CheckCircle size={18} color="#16a34a" />
                   ) : (
-                    <ShieldAlert size={18} color="#f43f5e" />
+                    <ShieldAlert size={18} color="#dc2626" />
                   )}
                   <strong style={{
                     fontSize: '0.875rem',
-                    color: result.status === 200 ? '#86efac' : '#fda4af'
+                    color: result.status === 200 ? '#15803d' : '#b91c1c'
                   }}>
-                    HTTP {result.status} {result.status === 200 ? 'OK - Cho phép truy cập' : result.status === 403 ? 'FORBIDDEN - CHẶN DO IMPOSSIBLE TRAVEL' : 'Lỗi'}
+                    HTTP {result.status} {result.status === 200 ? 'OK - Cho phép truy cập' : result.status === 403 ? 'FORBIDDEN - Chặn do phát hiện di chuyển bất khả thi' : 'Lỗi'}
                   </strong>
                 </div>
 
-                <span style={{ fontSize: '0.75rem', color: '#94a3b8' }}>
+                <span style={{ fontSize: '0.75rem', color: '#64748b' }}>
                   {result.data?.message}
                 </span>
               </div>
@@ -303,11 +277,12 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               <pre style={{
                 margin: 0,
                 padding: '12px',
-                background: 'rgba(5, 8, 16, 0.85)',
+                background: '#ffffff',
+                border: '1px solid #e2e8f0',
                 borderRadius: '6px',
                 fontSize: '0.75rem',
                 fontFamily: 'var(--font-mono)',
-                color: '#cbd5e1',
+                color: '#334155',
                 maxHeight: '180px',
                 overflowY: 'auto'
               }}>

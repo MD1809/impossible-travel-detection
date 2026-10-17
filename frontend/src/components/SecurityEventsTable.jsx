@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShieldAlert, AlertTriangle, ArrowRight, Eye, Filter, Search, Globe, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, ArrowRight, Eye, Search, Globe, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function SecurityEventsTable({ events, totalPages, currentPage, onPageChange, onSelectEvent, onFilterSeverity, selectedSeverity }) {
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,15 +45,15 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
     if (type === 'CONCURRENT_IMPOSSIBLE_TRAVEL') {
       return (
         <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <span style={{ color: '#fda4af', fontWeight: '600' }}>Concurrent Login</span>
-          <span style={{ fontSize: '0.725rem', color: '#94a3b8' }}>Xung đột phiên đồng thời</span>
+          <span style={{ color: '#b91c1c', fontWeight: '600' }}>Concurrent Login</span>
+          <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Xung đột phiên đồng thời</span>
         </div>
       );
     }
     return (
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <span style={{ color: '#fcd34d', fontWeight: '600' }}>Sequential Travel</span>
-        <span style={{ fontSize: '0.725rem', color: '#94a3b8' }}>Di chuyển nối tiếp siêu thanh</span>
+        <span style={{ color: '#d97706', fontWeight: '600' }}>Sequential Travel</span>
+        <span style={{ fontSize: '0.75rem', color: '#64748b' }}>Di chuyển tuần tự quá tốc độ</span>
       </div>
     );
   };
@@ -84,9 +84,9 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
         marginBottom: '20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <ShieldAlert size={22} color="#f43f5e" />
-          <h2 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#f8fafc' }}>
-            DANH SÁCH SỰ KIỆN AN NINH (SECURITY INCIDENT LOGS)
+          <ShieldAlert size={22} color="#dc2626" />
+          <h2 style={{ fontSize: '1.125rem', fontWeight: '700', color: '#0f172a' }}>
+            Sự kiện an ninh
           </h2>
           <span className="badge badge-blocked">
             {filteredEvents.length} bản ghi
@@ -99,22 +99,22 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
             display: 'flex',
             alignItems: 'center',
             gap: '8px',
-            background: 'rgba(15, 23, 42, 0.8)',
-            border: '1px solid rgba(148, 163, 184, 0.2)',
+            background: '#ffffff',
+            border: '1px solid #cbd5e1',
             borderRadius: '8px',
             padding: '6px 12px'
           }}>
-            <Search size={15} color="#94a3b8" />
+            <Search size={15} color="#64748b" />
             <input
               type="text"
-              placeholder="Tìm theo user, IP, thành phố..."
+              placeholder="Tìm theo user, IP, địa điểm..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 background: 'transparent',
                 border: 'none',
                 outline: 'none',
-                color: '#f8fafc',
+                color: '#0f172a',
                 fontSize: '0.8125rem',
                 width: '200px'
               }}
@@ -123,31 +123,29 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
 
           {/* Severity Filters */}
           <div style={{ display: 'flex', gap: '6px' }}>
-            {['ALL', 'CRITICAL', 'HIGH'].map((sev) => (
-              <button
-                key={sev}
-                onClick={() => onFilterSeverity(sev === 'ALL' ? null : sev)}
-                style={{
-                  padding: '6px 12px',
-                  borderRadius: '6px',
-                  fontSize: '0.75rem',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  border: '1px solid',
-                  background: (selectedSeverity === sev || (sev === 'ALL' && !selectedSeverity))
-                    ? 'rgba(56, 189, 248, 0.2)'
-                    : 'rgba(30, 41, 59, 0.5)',
-                  borderColor: (selectedSeverity === sev || (sev === 'ALL' && !selectedSeverity))
-                    ? 'rgba(56, 189, 248, 0.5)'
-                    : 'rgba(148, 163, 184, 0.15)',
-                  color: (selectedSeverity === sev || (sev === 'ALL' && !selectedSeverity))
-                    ? '#38bdf8'
-                    : '#94a3b8'
-                }}
-              >
-                {sev}
-              </button>
-            ))}
+            {['ALL', 'CRITICAL', 'HIGH'].map((sev) => {
+              const isSelected = selectedSeverity === sev || (sev === 'ALL' && !selectedSeverity);
+              return (
+                <button
+                  key={sev}
+                  onClick={() => onFilterSeverity(sev === 'ALL' ? null : sev)}
+                  style={{
+                    padding: '6px 12px',
+                    borderRadius: '6px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    border: '1px solid',
+                    background: isSelected ? '#0284c7' : '#ffffff',
+                    borderColor: isSelected ? '#0284c7' : '#e2e8f0',
+                    color: isSelected ? '#ffffff' : '#475569',
+                    transition: 'all 0.15s ease'
+                  }}
+                >
+                  {sev}
+                </button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -157,29 +155,29 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8125rem' }}>
           <thead>
             <tr style={{
-              borderBottom: '1px solid rgba(148, 163, 184, 0.15)',
-              color: '#94a3b8',
-              textTransform: 'uppercase',
-              fontSize: '0.725rem',
-              letterSpacing: '0.05em'
+              background: '#f8fafc',
+              borderBottom: '1px solid #e2e8f0',
+              color: '#475569',
+              fontSize: '0.75rem',
+              letterSpacing: '0.03em'
             }}>
-              <th style={{ padding: '12px 14px' }}>Thời gian</th>
-              <th style={{ padding: '12px 14px' }}>Tài khoản</th>
-              <th style={{ padding: '12px 14px' }}>Loại vi phạm</th>
-              <th style={{ padding: '12px 14px' }}>IP truy cập</th>
-              <th style={{ padding: '12px 14px' }}>Lộ trình di chuyển</th>
-              <th style={{ padding: '12px 14px' }}>Khoảng cách / Vận tốc</th>
-              <th style={{ padding: '12px 14px' }}>Mức độ</th>
-              <th style={{ padding: '12px 14px' }}>Quyết định</th>
-              <th style={{ padding: '12px 14px', textAlign: 'center' }}>Thao tác</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Thời gian</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Tài khoản</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Loại vi phạm</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>IP truy cập</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Lộ trình di chuyển</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Khoảng cách và vận tốc</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Mức độ</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600' }}>Trạng thái</th>
+              <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center' }}>Thao tác</th>
             </tr>
           </thead>
           <tbody>
             {filteredEvents.length === 0 ? (
               <tr>
                 <td colSpan="9" style={{ padding: '40px 14px', textAlign: 'center', color: '#64748b' }}>
-                  <Globe size={36} color="rgba(148, 163, 184, 0.3)" style={{ margin: '0 auto 10px', display: 'block' }} />
-                  Chưa ghi nhận sự kiện an ninh vi phạm Impossible Travel nào.
+                  <Globe size={32} color="#cbd5e1" style={{ margin: '0 auto 10px', display: 'block' }} />
+                  Chưa ghi nhận sự kiện vi phạm an ninh
                 </td>
               </tr>
             ) : (
@@ -187,14 +185,14 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                 <tr
                   key={event.id}
                   style={{
-                    borderBottom: '1px solid rgba(148, 163, 184, 0.08)',
+                    borderBottom: '1px solid #f1f5f9',
                     transition: 'background-color 0.15s ease'
                   }}
-                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(30, 41, 59, 0.4)'}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
                   onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                 >
                   {/* Timestamp */}
-                  <td style={{ padding: '14px', whiteFont: 'nowrap', color: '#cbd5e1' }}>
+                  <td style={{ padding: '14px', whiteSpace: 'nowrap', color: '#475569' }}>
                     {formatDateTime(event.createdAt)}
                   </td>
 
@@ -202,11 +200,11 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                   <td style={{ padding: '14px' }}>
                     <span style={{
                       fontWeight: '700',
-                      color: '#38bdf8',
-                      background: 'rgba(56, 189, 248, 0.1)',
+                      color: '#0284c7',
+                      background: '#f0f9ff',
                       padding: '3px 8px',
                       borderRadius: '6px',
-                      border: '1px solid rgba(56, 189, 248, 0.2)'
+                      border: '1px solid #e0f2fe'
                     }}>
                       {event.username || 'unknown'}
                     </span>
@@ -225,11 +223,11 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                   {/* Route */}
                   <td style={{ padding: '14px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ color: '#94a3b8' }}>
+                      <span style={{ color: '#475569' }}>
                         {event.refCity || 'Gốc'}, {event.refCountry || ''}
                       </span>
-                      <ArrowRight size={13} color="#f43f5e" />
-                      <span style={{ color: '#f8fafc', fontWeight: '600' }}>
+                      <ArrowRight size={13} color="#dc2626" />
+                      <span style={{ color: '#0f172a', fontWeight: '600' }}>
                         {event.city || 'Mới'}, {event.country || ''}
                       </span>
                     </div>
@@ -238,10 +236,10 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                   {/* Distance & Speed */}
                   <td style={{ padding: '14px' }}>
                     <div>
-                      <span style={{ color: '#94a3b8' }}>
+                      <span style={{ color: '#64748b' }}>
                         {event.distanceKm ? `${event.distanceKm.toLocaleString()} km` : 'N/A'}
                       </span>
-                      <div style={{ color: '#f43f5e', fontWeight: '700', fontFamily: 'var(--font-mono)' }}>
+                      <div style={{ color: '#dc2626', fontWeight: '700', fontFamily: 'var(--font-mono)' }}>
                         {event.calculatedSpeedKmh
                           ? (event.calculatedSpeedKmh > 1000000
                               ? '> 1.000.000 km/h'
@@ -268,8 +266,8 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
                     <button
                       onClick={() => onSelectEvent(event.id)}
                       className="btn-secondary"
-                      style={{ padding: '5px 10px', fontSize: '0.75rem' }}
-                      title="Xem chi tiết tọa độ và công thức tính toán"
+                      style={{ padding: '5px 12px', fontSize: '0.75rem' }}
+                      title="Xem chi tiết tọa độ và tính toán"
                     >
                       <Eye size={13} />
                       Chi tiết
@@ -291,7 +289,7 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
           gap: '12px',
           marginTop: '20px',
           paddingTop: '16px',
-          borderTop: '1px solid rgba(148, 163, 184, 0.1)'
+          borderTop: '1px solid #f1f5f9'
         }}>
           <button
             onClick={() => onPageChange(currentPage - 1)}
@@ -301,8 +299,8 @@ export default function SecurityEventsTable({ events, totalPages, currentPage, o
           >
             <ChevronLeft size={14} /> Trước
           </button>
-          <span style={{ fontSize: '0.8125rem', color: '#94a3b8' }}>
-            Trang <strong style={{ color: '#f8fafc' }}>{currentPage + 1}</strong> / {totalPages}
+          <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>
+            Trang <strong style={{ color: '#0f172a' }}>{currentPage + 1}</strong> / {totalPages}
           </span>
           <button
             onClick={() => onPageChange(currentPage + 1)}

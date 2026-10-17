@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, ShieldAlert, MapPin, Clock, Gauge, Compass, Copy, Check, ArrowRight } from 'lucide-react';
+import { X, ShieldAlert, MapPin, Clock, Gauge, Compass, Copy, Check } from 'lucide-react';
 
 export default function EventDetailModal({ eventId, eventDetail, onClose }) {
   const [copied, setCopied] = useState(false);
@@ -39,8 +39,8 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
       left: 0,
       right: 0,
       bottom: 0,
-      background: 'rgba(5, 8, 16, 0.85)',
-      backdropFilter: 'blur(12px)',
+      background: 'rgba(15, 23, 42, 0.45)',
+      backdropFilter: 'blur(8px)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -54,9 +54,9 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           maxWidth: '780px',
           maxHeight: '90vh',
           overflowY: 'auto',
-          background: '#0b1120',
-          border: '1px solid rgba(225, 29, 72, 0.4)',
-          boxShadow: '0 25px 60px rgba(0, 0, 0, 0.8), 0 0 35px rgba(225, 29, 72, 0.25)',
+          background: '#ffffff',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
           borderRadius: '16px',
           padding: '28px'
         }}
@@ -66,7 +66,7 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: '1px solid rgba(148, 163, 184, 0.15)',
+          borderBottom: '1px solid #e2e8f0',
           paddingBottom: '18px',
           marginBottom: '22px'
         }}>
@@ -75,25 +75,25 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
               width: '40px',
               height: '40px',
               borderRadius: '10px',
-              background: 'rgba(225, 29, 72, 0.15)',
-              border: '1px solid rgba(225, 29, 72, 0.4)',
+              background: '#fee2e2',
+              border: '1px solid #fecaca',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center'
             }}>
-              <ShieldAlert size={22} color="#f43f5e" />
+              <ShieldAlert size={22} color="#dc2626" />
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <h3 style={{ fontSize: '1.1875rem', fontWeight: '800', color: '#f8fafc' }}>
-                  HỒ SƠ ĐIỀU TRA SỰ KIỆN AN NINH #{eventDetail.id}
+                <h3 style={{ fontSize: '1.1875rem', fontWeight: '800', color: '#0f172a' }}>
+                  Hồ sơ điều tra sự kiện #{eventDetail.id}
                 </h3>
                 <span className="badge badge-critical">
                   {eventDetail.severity || 'CRITICAL'}
                 </span>
               </div>
-              <p style={{ fontSize: '0.8125rem', color: '#94a3b8', marginTop: '2px' }}>
-                Tài khoản mục tiêu: <strong style={{ color: '#38bdf8' }}>{eventDetail.username}</strong> (User ID: {eventDetail.userId})
+              <p style={{ fontSize: '0.8125rem', color: '#64748b', marginTop: '2px' }}>
+                Tài khoản: <strong style={{ color: '#0284c7' }}>{eventDetail.username}</strong>
               </p>
             </div>
           </div>
@@ -116,23 +116,23 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
         }}>
           {/* Reference Location */}
           <div style={{
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid rgba(56, 189, 248, 0.25)',
+            background: '#f8fafc',
+            border: '1px solid #e2e8f0',
             borderRadius: '12px',
             padding: '18px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#38bdf8' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#0284c7' }}>
               <Compass size={16} />
-              <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Mốc đối chiếu (Reference Base)
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Mốc đối chiếu
               </span>
             </div>
-            <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#f8fafc', marginBottom: '6px' }}>
+            <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#0f172a', marginBottom: '6px' }}>
               {ref.city || 'N/A'}, {ref.country || ''}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem', color: '#94a3b8' }}>
-              <div>IP: <span className="code-pill">{ref.ipAddress || '113.160.224.1'}</span></div>
-              <div>Tọa độ: <strong style={{ color: '#cbd5e1' }}>[{ref.latitude?.toFixed(4)}, {ref.longitude?.toFixed(4)}]</strong></div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem', color: '#475569' }}>
+              <div>Địa chỉ IP: <span className="code-pill">{ref.ipAddress || '113.160.224.1'}</span></div>
+              <div>Tọa độ: <strong style={{ color: '#0f172a' }}>[{ref.latitude?.toFixed(4)}, {ref.longitude?.toFixed(4)}]</strong></div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock size={13} />
                 <span>Thời điểm: {formatDateTime(ref.time)}</span>
@@ -142,23 +142,23 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
 
           {/* Current Attempt Location */}
           <div style={{
-            background: 'rgba(15, 23, 42, 0.85)',
-            border: '1px solid rgba(225, 29, 72, 0.35)',
+            background: '#fef2f2',
+            border: '1px solid #fecaca',
             borderRadius: '12px',
             padding: '18px'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#f43f5e' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: '#dc2626' }}>
               <MapPin size={16} />
-              <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Lần đăng nhập mới (Blocked Attempt)
+              <span style={{ fontSize: '0.75rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                Lần đăng nhập mới
               </span>
             </div>
-            <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#fda4af', marginBottom: '6px' }}>
+            <div style={{ fontSize: '1.125rem', fontWeight: '700', color: '#991b1b', marginBottom: '6px' }}>
               {current.city || 'N/A'}, {current.country || ''}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem', color: '#94a3b8' }}>
-              <div>IP: <span className="code-pill" style={{ color: '#fda4af' }}>{current.ipAddress || 'N/A'}</span></div>
-              <div>Tọa độ: <strong style={{ color: '#cbd5e1' }}>[{current.latitude?.toFixed(4)}, {current.longitude?.toFixed(4)}]</strong></div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem', color: '#475569' }}>
+              <div>Địa chỉ IP: <span className="code-pill" style={{ color: '#dc2626' }}>{current.ipAddress || 'N/A'}</span></div>
+              <div>Tọa độ: <strong style={{ color: '#0f172a' }}>[{current.latitude?.toFixed(4)}, {current.longitude?.toFixed(4)}]</strong></div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock size={13} />
                 <span>Thời điểm: {formatDateTime(current.time)}</span>
@@ -169,16 +169,16 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
 
         {/* Algorithm Forensics Metric Box */}
         <div style={{
-          background: 'linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(15, 23, 42, 0.9))',
-          border: '1px solid rgba(148, 163, 184, 0.2)',
+          background: '#f8fafc',
+          border: '1px solid #e2e8f0',
           borderRadius: '12px',
           padding: '20px',
           marginBottom: '22px'
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: '#f59e0b' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px', color: '#d97706' }}>
             <Gauge size={18} />
-            <h4 style={{ fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              KẾT QUẢ ĐÁNH GIÁ THUẬT TOÁN HAVERSINE & VẬN TỐC (v = d / Δt)
+            <h4 style={{ fontSize: '0.875rem', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Kết quả tính toán Haversine
             </h4>
           </div>
 
@@ -188,46 +188,47 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
             gap: '14px',
             marginBottom: '16px'
           }}>
-            <div style={{ background: 'rgba(15, 23, 42, 0.7)', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.725rem', color: '#94a3b8', textTransform: 'uppercase' }}>Khoảng cách địa lý (d)</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f8fafc', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Khoảng cách</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {metrics.distanceKm?.toLocaleString()} km
               </div>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.7)', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.725rem', color: '#94a3b8', textTransform: 'uppercase' }}>Độ chênh thời gian (Δt)</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f8fafc', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
-                {metrics.timeDiffSeconds}s ({metrics.timeDiffMinutes} phút)
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Thời gian chênh lệch</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0f172a', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+                {metrics.timeDiffSeconds} giây
               </div>
             </div>
 
-            <div style={{ background: 'rgba(225, 29, 72, 0.1)', border: '1px solid rgba(225, 29, 72, 0.3)', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.725rem', color: '#fda4af', textTransform: 'uppercase' }}>Vận tốc suy ra (v)</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#f43f5e', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+            <div style={{ background: '#fef2f2', border: '1px solid #fecaca', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#b91c1c' }}>Vận tốc tính toán</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#dc2626', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {metrics.calculatedSpeedKmh > 1000000 ? '> 1.000.000 km/h' : `${metrics.calculatedSpeedKmh?.toLocaleString()} km/h`}
               </div>
             </div>
 
-            <div style={{ background: 'rgba(15, 23, 42, 0.7)', padding: '12px', borderRadius: '8px' }}>
-              <div style={{ fontSize: '0.725rem', color: '#94a3b8', textTransform: 'uppercase' }}>Ngưỡng máy bay (V_max)</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#38bdf8', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', padding: '12px', borderRadius: '8px' }}>
+              <div style={{ fontSize: '0.75rem', color: '#64748b' }}>Ngưỡng tốc độ</div>
+              <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#0284c7', fontFamily: 'var(--font-mono)', marginTop: '2px' }}>
                 {metrics.thresholdSpeedKmh} km/h
               </div>
             </div>
           </div>
 
           <div style={{
-            background: 'rgba(225, 29, 72, 0.15)',
-            borderLeft: '4px solid #f43f5e',
-            padding: '10px 14px',
-            borderRadius: '4px',
+            background: '#ffffff',
+            border: '1px solid #fecaca',
+            borderLeft: '4px solid #dc2626',
+            padding: '12px 14px',
+            borderRadius: '6px',
             fontSize: '0.8125rem',
-            color: '#fecdd3'
+            color: '#7f1d1d'
           }}>
-            <strong>Kết luận điều tra:</strong> Vận tốc di chuyển tính toán vượt{' '}
-            <strong style={{ color: '#fff' }}>{speedRatio ? `${speedRatio} lần` : 'quá xa'}</strong> giới hạn vật lý của máy bay thương mại thông dụng (900 km/h). Hệ thống tự động kích hoạt luật{' '}
-            <code className="code-pill" style={{ color: '#fda4af' }}>{eventDetail.eventType}</code> và đã thực thi lệnh <strong>CHẶN TRUY CẬP (HTTP 403 Forbidden)</strong>.
+            <strong>Kết luận:</strong> Vận tốc tính toán vượt{' '}
+            <strong style={{ color: '#b91c1c' }}>{speedRatio ? `${speedRatio} lần` : 'quá'}</strong> giới hạn vật lý của máy bay thương mại 900 km/h. Hệ thống đã kích hoạt luật an ninh{' '}
+            <code className="code-pill" style={{ color: '#dc2626' }}>{eventDetail.eventType}</code> và thực thi lệnh <strong>Chặn truy cập</strong>.
           </div>
         </div>
 
@@ -238,12 +239,12 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
             className="btn-secondary"
             style={{ fontSize: '0.8125rem' }}
           >
-            {copied ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
-            <span>{copied ? 'Đã sao chép JSON!' : 'Sao chép JSON báo cáo'}</span>
+            {copied ? <Check size={15} color="#16a34a" /> : <Copy size={15} />}
+            <span>{copied ? 'Đã sao chép' : 'Sao chép JSON'}</span>
           </button>
 
           <button onClick={onClose} className="btn-primary" style={{ fontSize: '0.8125rem' }}>
-            Đóng cửa sổ
+            Đóng
           </button>
         </div>
 
