@@ -132,6 +132,18 @@ body {
   border: 1px solid rgba(16, 185, 129, 0.35);
 }
 
+.badge-logout {
+  background: rgba(37, 99, 235, 0.15);
+  color: #60a5fa;
+  border: 1px solid rgba(37, 99, 235, 0.35);
+}
+
+.badge-failed {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
 /* Radar pulse animation for alert indicator */
 @keyframes radar-pulse {
   0% {

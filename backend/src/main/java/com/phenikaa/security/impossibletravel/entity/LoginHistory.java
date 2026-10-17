@@ -13,8 +13,11 @@ public class LoginHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "user_id", nullable = false)
+    @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "attempted_username", length = 100)
+    private String attemptedUsername;
 
     @Column(name = "ip_address", nullable = false, length = 45)
     private String ipAddress;
@@ -72,6 +75,14 @@ public class LoginHistory {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getAttemptedUsername() {
+        return attemptedUsername;
+    }
+
+    public void setAttemptedUsername(String attemptedUsername) {
+        this.attemptedUsername = attemptedUsername;
     }
 
     public String getIpAddress() {

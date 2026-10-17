@@ -33,17 +33,18 @@ CREATE TABLE IF NOT EXISTS user_sessions (
     INDEX idx_session_token (session_token)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 3. Bảng login_history: Lịch sử mọi lần đăng nhập (phục vụ Kịch bản 2: Sequential Impossible Travel)
+-- 3. Bảng login_history: Nhật ký hoạt động (đăng nhập, đăng xuất, lỗi đăng nhập, bị chặn)
 CREATE TABLE IF NOT EXISTS login_history (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    user_id BIGINT NOT NULL,
+    user_id BIGINT NULL,
+    attempted_username VARCHAR(100),
     ip_address VARCHAR(45) NOT NULL,
     city VARCHAR(100),
     country VARCHAR(100),
     latitude DECIMAL(10, 6) NOT NULL,
     longitude DECIMAL(10, 6) NOT NULL,
     login_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    status ENUM('SUCCESS', 'FAILED', 'BLOCKED') NOT NULL,
+    status VARCHAR(20) NOT NULL,
     failure_reason VARCHAR(255),
     CONSTRAINT fk_history_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_user_status_time (user_id, status, login_time DESC)

@@ -90,10 +90,12 @@ public class AuthService {
 
         // 2. Tìm kiếm người dùng
         Optional<User> userOpt = userRepository.findByUsername(request.getUsername());
-        if (userOpt.isEmpty() || !passwordEncoder.matches(request.getPassword(), userOpt.get().getPasswordHash())) {
-            if (userOpt.isPresent()) {
-                saveLoginHistory(userOpt.get().getId(), effectiveIp, location, now, LoginStatus.FAILED, "Sai mật khẩu");
-            }
+        if (userOpt.isEmpty()) {
+            saveLoginHistory(null, request.getUsername(), effectiveIp, location, now, LoginStatus.FAILED, "Tài khoản không tồn tại");
+            return LoginResponseDto.unauthorized("Tên đăng nhập hoặc mật khẩu không chính xác");
+        }
+        if (!passwordEncoder.matches(request.getPassword(), userOpt.get().getPasswordHash())) {
+            saveLoginHistory(userOpt.get().getId(), userOpt.get().getUsername(), effectiveIp, location, now, LoginStatus.FAILED, "Mật khẩu không chính xác");
             return LoginResponseDto.unauthorized("Tên đăng nhập hoặc mật khẩu không chính xác");
         }
 
@@ -104,7 +106,7 @@ public class AuthService {
 
         if (detection.isBlocked()) {
             // Ghi nhận Lịch sử đăng nhập bị chặn
-            saveLoginHistory(user.getId(), effectiveIp, location, now, LoginStatus.BLOCKED, detection.getReason());
+            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, detection.getReason());
 
             // Lưu sự kiện an ninh vào bảng security_events
             SecurityEvent event = new SecurityEvent();
@@ -166,7 +168,7 @@ public class AuthService {
         }
 
         // 4. Đăng nhập thành công hợp lệ
-        saveLoginHistory(user.getId(), effectiveIp, location, now, LoginStatus.SUCCESS, null);
+        saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.SUCCESS, null);
 
         // Tạo phiên làm việc mới trong user_sessions
         String sessionToken = "sess_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16);
@@ -207,6 +209,18 @@ public class AuthService {
             UserSession session = sessionOpt.get();
             session.setIsActive(false);
             userSessionRepository.save(session);
+
+            String username = userRepository.findById(session.getUserId()).map(User::getUsername).orElse(null);
+            GeoLocationDto loc = GeoLocationDto.builder()
+                    .ipAddress(session.getIpAddress())
+                    .city(session.getCity())
+                    .country(session.getCountry())
+                    .latitude(session.getLatitude())
+                    .longitude(session.getLongitude())
+                    .resolved(true)
+                    .build();
+            saveLoginHistory(session.getUserId(), username, session.getIpAddress(), loc, LocalDateTime.now(), LoginStatus.LOGOUT, "Đăng xuất thành công");
+
             log.info("Phiên làm việc đã bị hủy: token={}", sessionToken);
             return true;
         }
@@ -225,9 +239,20 @@ public class AuthService {
         if (userOpt.isEmpty()) {
             return 0;
         }
-        List<UserSession> activeSessions = userSessionRepository.findByUserIdAndIsActiveTrue(userOpt.get().getId());
+        User user = userOpt.get();
+        List<UserSession> activeSessions = userSessionRepository.findByUserIdAndIsActiveTrue(user.getId());
+        LocalDateTime now = LocalDateTime.now();
         for (UserSession session : activeSessions) {
             session.setIsActive(false);
+            GeoLocationDto loc = GeoLocationDto.builder()
+                    .ipAddress(session.getIpAddress())
+                    .city(session.getCity())
+                    .country(session.getCountry())
+                    .latitude(session.getLatitude())
+                    .longitude(session.getLongitude())
+                    .resolved(true)
+                    .build();
+            saveLoginHistory(user.getId(), user.getUsername(), session.getIpAddress(), loc, now, LoginStatus.LOGOUT, "Đăng xuất bởi quản trị viên");
         }
         userSessionRepository.saveAll(activeSessions);
         log.info("Đã đóng {} phiên làm việc của user: {}", activeSessions.size(), username);
@@ -236,6 +261,7 @@ public class AuthService {
 
     private void saveLoginHistory(
             Long userId,
+            String attemptedUsername,
             String ip,
             GeoLocationDto loc,
             LocalDateTime time,
@@ -243,11 +269,14 @@ public class AuthService {
             String failureReason) {
         LoginHistory history = new LoginHistory();
         history.setUserId(userId);
+        history.setAttemptedUsername(attemptedUsername);
         history.setIpAddress(ip);
-        history.setCity(loc.getCity());
-        history.setCountry(loc.getCountry());
-        history.setLatitude(loc.getLatitude());
-        history.setLongitude(loc.getLongitude());
+        if (loc != null) {
+            history.setCity(loc.getCity());
+            history.setCountry(loc.getCountry());
+            history.setLatitude(loc.getLatitude());
+            history.setLongitude(loc.getLongitude());
+        }
         history.setLoginTime(time);
         history.setStatus(status);
         history.setFailureReason(failureReason);

@@ -167,9 +167,14 @@ public class DashboardService {
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("id", h.getId());
             map.put("userId", h.getUserId());
-            map.put("username", usernameCache.computeIfAbsent(h.getUserId(), id ->
-                    userRepository.findById(id).map(User::getUsername).orElse("unknown")
-            ));
+
+            String resolvedUsername = h.getAttemptedUsername();
+            if ((resolvedUsername == null || resolvedUsername.isEmpty()) && h.getUserId() != null) {
+                resolvedUsername = usernameCache.computeIfAbsent(h.getUserId(), id ->
+                        userRepository.findById(id).map(User::getUsername).orElse("unknown")
+                );
+            }
+            map.put("username", resolvedUsername != null ? resolvedUsername : "unknown");
             map.put("ipAddress", h.getIpAddress());
             map.put("city", h.getCity());
             map.put("country", h.getCountry());
