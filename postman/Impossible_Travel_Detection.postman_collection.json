@@ -1,0 +1,242 @@
+{
+	"info": {
+		"_postman_id": "impossible-travel-soc-collection",
+		"name": "Impossible Travel Detection API",
+		"description": "Bộ kiểm thử mô phỏng toàn diện cho Hệ thống phát hiện di chuyển bất khả thi (Impossible Travel Detection) - Đề tài môn Bảo mật ứng dụng và hệ thống (Phenikaa University).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0. System Health & GeoIP",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": ["{{base_url}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Test GeoIP Resolution (Hanoi)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health/test-geoip?ip=118.70.1.1",
+							"host": ["{{base_url}}"],
+							"path": ["health", "test-geoip"],
+							"query": [
+								{ "key": "ip", "value": "118.70.1.1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "Test GeoIP Resolution (New York)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health/test-geoip?ip=161.185.160.93",
+							"host": ["{{base_url}}"],
+							"path": ["health", "test-geoip"],
+							"query": [
+								{ "key": "ip", "value": "161.185.160.93" }
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "1. Authentication & Impossible Travel Scenarios",
+			"item": [
+				{
+					"name": "1.1 Đăng ký tài khoản (Register)",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"fullName\": \"Nguyen Van A\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "register"]
+						}
+					}
+				},
+				{
+					"name": "1.2 Kịch bản 1: Đăng nhập hợp lệ tại Hà Nội (200 OK)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.sessionToken) {",
+									"    pm.environment.set(\"session_token\", jsonData.sessionToken);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"113.160.224.1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "1.3 Kịch bản 2: Đăng nhập đồng thời tức thời từ New York (403 Blocked)",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"161.185.160.93\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "1.4 Kịch bản 3: Đăng nhập bất khả thi nối tiếp tới Tokyo (403 Blocked)",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"133.242.0.1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "1.5 Đăng nhập sai mật khẩu (401 Unauthorized)",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"WrongPass123!\",\n  \"ipAddress\": \"113.160.224.1\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "1.6 Đăng xuất (Logout)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{ "key": "Authorization", "value": "Bearer {{session_token}}" }
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/logout",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. SOC Dashboard & Security Audit",
+			"item": [
+				{
+					"name": "2.1 Lấy thống kê KPI tổng hợp",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/dashboard/summary",
+							"host": ["{{base_url}}"],
+							"path": ["dashboard", "summary"]
+						}
+					}
+				},
+				{
+					"name": "2.2 Lấy danh sách sự kiện an ninh",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/security-events?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["security-events"],
+							"query": [
+								{ "key": "page", "value": "0" },
+								{ "key": "size", "value": "10" }
+							]
+						}
+					}
+				},
+				{
+					"name": "2.3 Lấy chi tiết sự kiện an ninh theo ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/security-events/1",
+							"host": ["{{base_url}}"],
+							"path": ["security-events", "1"]
+						}
+					}
+				},
+				{
+					"name": "2.4 Lấy lịch sử tất cả lần đăng nhập",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/login-history?limit=50",
+							"host": ["{{base_url}}"],
+							"path": ["login-history"],
+							"query": [
+								{ "key": "limit", "value": "50" }
+							]
+						}
+					}
+				},
+				{
+					"name": "2.5 Lấy danh sách phiên đang hoạt động",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/sessions/active",
+							"host": ["{{base_url}}"],
+							"path": ["sessions", "active"]
+						}
+					}
+				}
+			]
+		}
+	]
+}
