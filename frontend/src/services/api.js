@@ -51,7 +51,10 @@ export const DashboardApi = {
   // 8. Đăng xuất
   logout: (token) => api.post('/auth/logout', {}, {
     headers: { Authorization: `Bearer ${token}` }
-  })
+  }),
+
+  // 9. Đăng xuất toàn bộ phiên của tài khoản
+  logoutAll: (username) => api.post('/auth/logout-all', { username })
 };
 
 export default api;

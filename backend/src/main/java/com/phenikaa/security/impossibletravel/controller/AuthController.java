@@ -87,4 +87,24 @@ public class AuthController {
             ));
         }
     }
+
+    /**
+     * API Đăng xuất toàn bộ các phiên làm việc của người dùng
+     * POST /api/auth/logout-all
+     */
+    @PostMapping("/logout-all")
+    public ResponseEntity<Map<String, Object>> logoutAll(
+            @RequestParam(required = false) String username,
+            @RequestBody(required = false) Map<String, String> body) {
+        String targetUser = username;
+        if ((targetUser == null || targetUser.isEmpty()) && body != null) {
+            targetUser = body.get("username");
+        }
+        int count = authService.logoutAllUserSessions(targetUser);
+        return ResponseEntity.ok(Map.of(
+                "success", true,
+                "message", "Đã kết thúc " + count + " phiên làm việc của tài khoản " + (targetUser != null ? targetUser : ""),
+                "closedSessionsCount", count
+        ));
+    }
 }

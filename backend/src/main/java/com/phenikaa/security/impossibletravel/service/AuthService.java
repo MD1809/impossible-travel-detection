@@ -213,6 +213,27 @@ public class AuthService {
         return false;
     }
 
+    /**
+     * Đăng xuất toàn bộ các phiên làm việc đang hoạt động của người dùng
+     */
+    @Transactional
+    public int logoutAllUserSessions(String username) {
+        if (username == null || username.trim().isEmpty()) {
+            return 0;
+        }
+        Optional<User> userOpt = userRepository.findByUsername(username.trim());
+        if (userOpt.isEmpty()) {
+            return 0;
+        }
+        List<UserSession> activeSessions = userSessionRepository.findByUserIdAndIsActiveTrue(userOpt.get().getId());
+        for (UserSession session : activeSessions) {
+            session.setIsActive(false);
+        }
+        userSessionRepository.saveAll(activeSessions);
+        log.info("Đã đóng {} phiên làm việc của user: {}", activeSessions.size(), username);
+        return activeSessions.size();
+    }
+
     private void saveLoginHistory(
             Long userId,
             String ip,

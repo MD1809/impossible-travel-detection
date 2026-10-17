@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Play, Zap, CheckCircle, ShieldAlert, UserPlus } from 'lucide-react';
+import { Play, Zap, CheckCircle, ShieldAlert, UserPlus, LogOut } from 'lucide-react';
 import { DashboardApi } from '../services/api';
 
 export default function LiveSimulationPanel({ onSimulationComplete }) {
@@ -23,7 +23,14 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
       ip: '161.185.160.93',
       city: 'New York, Hoa Kỳ',
       type: 'critical',
-      desc: 'Khoảng cách 13.125 km ngay sau phiên Hà Nội'
+      desc: 'Kịch bản 1: Đồng thời khi phiên Hà Nội đang mở'
+    },
+    {
+      name: 'Tokyo',
+      ip: '133.242.0.1',
+      city: 'Tokyo, Nhật Bản',
+      type: 'critical',
+      desc: 'Kịch bản 2: Tuần tự sau khi bấm Đăng xuất phiên'
     },
     {
       name: 'TP. Hồ Chí Minh',
@@ -31,13 +38,6 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
       city: 'TP.HCM, Việt Nam',
       type: 'normal',
       desc: 'Khoảng cách 1.138 km'
-    },
-    {
-      name: 'Tokyo',
-      ip: '133.242.0.1',
-      city: 'Tokyo, Nhật Bản',
-      type: 'critical',
-      desc: 'Khoảng cách 3.650 km sau vài giây'
     }
   ];
 
@@ -47,6 +47,20 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
     try {
       const res = await DashboardApi.register(username, password, 'Sinh Viên Phenikaa');
       setResult({ status: 201, data: res });
+      if (onSimulationComplete) onSimulationComplete();
+    } catch (err) {
+      setResult({ status: err.status || 400, data: err });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleLogoutAll = async () => {
+    setLoading(true);
+    setResult(null);
+    try {
+      const res = await DashboardApi.logoutAll(username);
+      setResult({ status: 200, data: res });
       if (onSimulationComplete) onSimulationComplete();
     } catch (err) {
       setResult({ status: err.status || 400, data: err });
@@ -230,6 +244,17 @@ export default function LiveSimulationPanel({ onSimulationComplete }) {
               >
                 <UserPlus size={14} />
                 Tạo tài khoản
+              </button>
+
+              <button
+                onClick={handleLogoutAll}
+                disabled={loading}
+                className="btn-secondary"
+                style={{ fontSize: '0.78125rem', padding: '6px 12px' }}
+                title="Đóng các phiên đang mở để thử Kịch bản 2 di chuyển tuần tự"
+              >
+                <LogOut size={14} />
+                Đăng xuất phiên cũ
               </button>
 
               <button
