@@ -38,6 +38,10 @@ public class GeoLocationService {
      * @param ipAddress Chuỗi địa chỉ IP (IPv4 hoặc IPv6)
      * @return Đối tượng GeoLocationDto chứa tọa độ và tên địa danh
      */
+    public GeoLocationDto resolve(String ipAddress) {
+        return resolveIp(ipAddress);
+    }
+
     public GeoLocationDto resolveIp(String ipAddress) {
         if (ipAddress == null || ipAddress.trim().isEmpty()) {
             return new GeoLocationDto("unknown", DEFAULT_FALLBACK_CITY, DEFAULT_FALLBACK_COUNTRY, "VN",
