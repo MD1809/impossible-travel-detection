@@ -1,5 +1,6 @@
-# Documentation
+# Documentation & AI agents
 docs/
+.agents/
 
 # Java / Maven
 target/
