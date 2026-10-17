@@ -105,16 +105,6 @@ public class AuthService {
         DetectionResultDto detection = impossibleTravelEngine.evaluate(user.getId(), location, now);
 
         if (detection.isBlocked()) {
-            // Xác định thông tin khi bị chặn trong Nhật ký hoạt động:
-            // Kịch bản 1: Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản
-            // Kịch bản 2: Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn
-            String blockedReason = (detection.getEventType() == EventType.CONCURRENT_IMPOSSIBLE_TRAVEL)
-                    ? "Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản"
-                    : "Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn";
-
-            // Ghi nhận Lịch sử đăng nhập bị chặn
-            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason);
-
             // Lưu sự kiện an ninh vào bảng security_events
             SecurityEvent event = new SecurityEvent();
             event.setUserId(user.getId());
@@ -139,7 +129,17 @@ public class AuthService {
             event.setThresholdSpeedKmh(detection.getThresholdSpeedKmh());
             event.setSeverity(detection.getSeverity());
             event.setActionTaken("BLOCKED");
-            securityEventRepository.save(event);
+            SecurityEvent savedEvent = securityEventRepository.save(event);
+
+            // Xác định thông tin khi bị chặn trong Nhật ký hoạt động:
+            // Kịch bản 1: Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản
+            // Kịch bản 2: Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn
+            String blockedReason = (detection.getEventType() == EventType.CONCURRENT_IMPOSSIBLE_TRAVEL)
+                    ? "Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản"
+                    : "Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn";
+
+            // Ghi nhận Lịch sử đăng nhập bị chặn kèm ID của sự kiện an ninh
+            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEvent.getId());
 
             // Đóng gói Detection Details theo chuẩn 05_API_SPECIFICATION.md
             Map<String, Object> details = new LinkedHashMap<>();
@@ -274,6 +274,18 @@ public class AuthService {
             LocalDateTime time,
             LoginStatus status,
             String failureReason) {
+        saveLoginHistory(userId, attemptedUsername, ip, loc, time, status, failureReason, null);
+    }
+
+    private void saveLoginHistory(
+            Long userId,
+            String attemptedUsername,
+            String ip,
+            GeoLocationDto loc,
+            LocalDateTime time,
+            LoginStatus status,
+            String failureReason,
+            Long securityEventId) {
         LoginHistory history = new LoginHistory();
         history.setUserId(userId);
         history.setAttemptedUsername(attemptedUsername);
@@ -287,6 +299,7 @@ public class AuthService {
         history.setLoginTime(time);
         history.setStatus(status);
         history.setFailureReason(failureReason);
+        history.setSecurityEventId(securityEventId);
         loginHistoryRepository.save(history);
     }
 }

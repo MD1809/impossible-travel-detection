@@ -45,6 +45,9 @@ public class LoginHistory {
     @Column(name = "failure_reason", length = 255)
     private String failureReason;
 
+    @Column(name = "security_event_id")
+    private Long securityEventId;
+
     public LoginHistory() {
     }
 
@@ -147,5 +150,13 @@ public class LoginHistory {
 
     public void setFailureReason(String failureReason) {
         this.failureReason = failureReason;
+    }
+
+    public Long getSecurityEventId() {
+        return securityEventId;
+    }
+
+    public void setSecurityEventId(Long securityEventId) {
+        this.securityEventId = securityEventId;
     }
 }

@@ -107,6 +107,34 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
           </button>
         </div>
 
+        {/* Block Type Banner */}
+        <div style={{
+          background: 'rgba(37, 99, 235, 0.1)',
+          border: '1px solid rgba(37, 99, 235, 0.3)',
+          borderRadius: '8px',
+          padding: '12px 16px',
+          marginBottom: '20px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          flexWrap: 'wrap',
+          gap: '8px'
+        }}>
+          <div>
+            <span style={{ fontSize: '0.75rem', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+              Loại chặn
+            </span>
+            <div style={{ fontSize: '0.9375rem', fontWeight: '700', color: '#60a5fa', marginTop: '2px' }}>
+              {eventDetail.eventType === 'CONCURRENT_IMPOSSIBLE_TRAVEL'
+                ? 'Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản'
+                : 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn'}
+            </div>
+          </div>
+          <span className="badge badge-blocked">
+            {eventDetail.eventType}
+          </span>
+        </div>
+
         {/* 2 Locations Comparison Cards */}
         <div style={{
           display: 'grid',
@@ -131,7 +159,7 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
               {ref.city || 'N/A'}, {ref.country || ''}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '0.8125rem', color: '#94a3b8' }}>
-              <div>Địa chỉ IP: <span className="code-pill">{ref.ipAddress || '113.160.224.1'}</span></div>
+              <div>Địa chỉ IP: <span className="code-pill">{ref.ipAddress || 'N/A'}</span></div>
               <div>Tọa độ: <strong style={{ color: '#cbd5e1' }}>[{ref.latitude?.toFixed(4)}, {ref.longitude?.toFixed(4)}]</strong></div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                 <Clock size={13} />

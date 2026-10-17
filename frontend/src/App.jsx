@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import StatCards from './components/StatCards';
-import SecurityEventsTable from './components/SecurityEventsTable';
 import EventDetailModal from './components/EventDetailModal';
 import LiveSimulationPanel from './components/LiveSimulationPanel';
 import { DashboardApi } from './services/api';
-import { Radio, Users, History, AlertCircle } from 'lucide-react';
+import { Users, History, AlertCircle, Eye } from 'lucide-react';
 
 export default function App() {
   const [summary, setSummary] = useState(null);
@@ -102,6 +101,58 @@ export default function App() {
     }
   };
 
+  // Mở modal chi tiết sự kiện bị chặn từ bảng Nhật ký hoạt động
+  const handleOpenDetail = async (item) => {
+    if (item.securityEventId) {
+      try {
+        const detail = await DashboardApi.getSecurityEventDetail(item.securityEventId);
+        if (detail) {
+          setSelectedEventDetail(detail);
+          setSelectedEventId(item.securityEventId);
+          return;
+        }
+      } catch (err) {
+        console.warn('Lỗi tải chi tiết sự kiện an ninh từ API:', err);
+      }
+    }
+
+    // Dự phòng hiển thị nếu sự kiện chưa kịp liên kết ID
+    const isConcurrent = item.failureReason?.includes('đồng thời');
+    setSelectedEventDetail({
+      id: item.id,
+      userId: item.userId,
+      username: item.username || 'unknown',
+      eventType: isConcurrent ? 'CONCURRENT_IMPOSSIBLE_TRAVEL' : 'SEQUENTIAL_IMPOSSIBLE_TRAVEL',
+      severity: 'HIGH',
+      actionTaken: 'BLOCKED',
+      createdAt: item.loginTime,
+      currentAttempt: {
+        ipAddress: item.ipAddress,
+        city: item.city || 'Không xác định',
+        country: item.country || '',
+        latitude: item.latitude,
+        longitude: item.longitude,
+        time: item.loginTime
+      },
+      referenceAttempt: {
+        ipAddress: 'Hệ thống đối chiếu',
+        city: 'Vị trí đăng nhập trước',
+        country: '',
+        latitude: null,
+        longitude: null,
+        time: null
+      },
+      metrics: {
+        distanceKm: null,
+        timeDiffSeconds: null,
+        timeDiffMinutes: null,
+        calculatedSpeedKmh: null,
+        thresholdSpeedKmh: 900
+      }
+    });
+    setSelectedEventId(item.id);
+  };
+
   const handleFilterSeverity = (sev) => {
     setSelectedSeverity(sev);
     setCurrentPage(0);
@@ -178,27 +229,6 @@ export default function App() {
         </button>
 
         <button
-          onClick={() => setActiveTab('events')}
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '0.875rem',
-            fontWeight: '600',
-            cursor: 'pointer',
-            border: activeTab === 'events' ? '1px solid rgba(37, 99, 235, 0.4)' : '1px solid transparent',
-            background: activeTab === 'events' ? 'rgba(37, 99, 235, 0.18)' : 'transparent',
-            color: activeTab === 'events' ? '#60a5fa' : '#94a3b8',
-            transition: 'all 0.15s ease'
-          }}
-        >
-          <Radio size={16} />
-          <span>Sự kiện an ninh</span>
-        </button>
-
-        <button
           onClick={() => setActiveTab('sessions')}
           style={{
             display: 'flex',
@@ -222,19 +252,6 @@ export default function App() {
           </span>
         </button>
       </div>
-
-      {/* Tab 1: Security Events Table */}
-      {activeTab === 'events' && (
-        <SecurityEventsTable
-          events={events}
-          totalPages={totalPages}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-          onSelectEvent={handleSelectEvent}
-          onFilterSeverity={handleFilterSeverity}
-          selectedSeverity={selectedSeverity}
-        />
-      )}
 
       {/* Tab 2: Active Sessions Table */}
       {activeTab === 'sessions' && (
@@ -310,12 +327,13 @@ export default function App() {
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Vị trí</th>
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Hoạt động</th>
                   <th style={{ padding: '12px 14px', fontWeight: '600' }}>Chi tiết</th>
+                  <th style={{ padding: '12px 14px', fontWeight: '600', textAlign: 'center' }}>Thao tác</th>
                 </tr>
               </thead>
               <tbody>
                 {loginHistory.length === 0 ? (
                   <tr>
-                    <td colSpan="6" style={{ padding: '30px', textAlign: 'center', color: '#64748b' }}>
+                    <td colSpan="7" style={{ padding: '30px', textAlign: 'center', color: '#64748b' }}>
                       Chưa có dữ liệu nhật ký hoạt động
                     </td>
                   </tr>
@@ -369,6 +387,40 @@ export default function App() {
                         )}
                         {!['SUCCESS', 'LOGOUT', 'BLOCKED', 'FAILED'].includes(h.status) && (
                           <span style={{ color: '#94a3b8' }}>{h.failureReason || '—'}</span>
+                        )}
+                      </td>
+                      <td style={{ padding: '12px 14px', textAlign: 'center' }}>
+                        {h.status === 'BLOCKED' ? (
+                          <button
+                            onClick={() => handleOpenDetail(h)}
+                            style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '6px',
+                              padding: '5px 12px',
+                              borderRadius: '6px',
+                              fontSize: '0.75rem',
+                              fontWeight: '600',
+                              color: '#60a5fa',
+                              background: 'rgba(37, 99, 235, 0.15)',
+                              border: '1px solid rgba(37, 99, 235, 0.35)',
+                              cursor: 'pointer',
+                              transition: 'all 0.15s ease'
+                            }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.background = '#2563eb';
+                              e.currentTarget.style.color = '#ffffff';
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)';
+                              e.currentTarget.style.color = '#60a5fa';
+                            }}
+                          >
+                            <Eye size={13} />
+                            <span>Chi tiết</span>
+                          </button>
+                        ) : (
+                          <span style={{ color: '#475569' }}>—</span>
                         )}
                       </td>
                     </tr>

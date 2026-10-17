@@ -183,6 +183,19 @@ public class DashboardService {
             map.put("status", h.getStatus().name());
             map.put("failureReason", h.getFailureReason());
             map.put("loginTime", h.getLoginTime());
+
+            Long eventId = h.getSecurityEventId();
+            if (eventId == null && h.getStatus() == LoginStatus.BLOCKED && h.getUserId() != null) {
+                List<SecurityEvent> events = securityEventRepository.findByUserIdOrderByCreatedAtDesc(h.getUserId());
+                if (!events.isEmpty()) {
+                    eventId = events.stream()
+                            .filter(e -> e.getIpAddress() != null && e.getIpAddress().equals(h.getIpAddress()))
+                            .findFirst()
+                            .map(SecurityEvent::getId)
+                            .orElse(events.get(0).getId());
+                }
+            }
+            map.put("securityEventId", eventId);
             return map;
         }).toList();
     }
