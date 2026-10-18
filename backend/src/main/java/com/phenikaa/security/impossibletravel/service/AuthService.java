@@ -126,6 +126,7 @@ public class AuthService {
             event.setRefCountry(detection.getRefCountry());
             event.setRefLatitude(detection.getRefLatitude());
             event.setRefLongitude(detection.getRefLongitude());
+            event.setRefIp(detection.getRefIp());
             event.setRefTime(detection.getRefTime());
             event.setDistanceKm(detection.getDistanceKm());
             event.setTimeDiffMinutes(detection.getTimeDiffMinutes());

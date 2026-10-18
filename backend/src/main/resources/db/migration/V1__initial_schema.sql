@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS security_events (
     ref_country VARCHAR(100),
     ref_latitude DECIMAL(10, 6),
     ref_longitude DECIMAL(10, 6),
+    ref_ip VARCHAR(45) NULL,
     ref_time TIMESTAMP NULL,
     distance_km DECIMAL(10, 2),
     time_diff_minutes DECIMAL(10, 2),

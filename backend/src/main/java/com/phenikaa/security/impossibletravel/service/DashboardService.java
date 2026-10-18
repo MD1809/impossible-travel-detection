@@ -128,8 +128,29 @@ public class DashboardService {
             );
             detail.setCurrentAttempt(current);
 
+            String resolvedRefIp = event.getRefIp();
+            if (resolvedRefIp == null || resolvedRefIp.isEmpty() || "N/A".equalsIgnoreCase(resolvedRefIp)) {
+                if (event.getUserId() != null) {
+                    resolvedRefIp = loginHistoryRepository.findByUserIdOrderByLoginTimeDesc(event.getUserId())
+                            .stream()
+                            .filter(lh -> lh.getStatus() == LoginStatus.SUCCESS)
+                            .filter(lh -> event.getRefTime() == null || !lh.getLoginTime().isAfter(event.getRefTime()))
+                            .map(LoginHistory::getIpAddress)
+                            .findFirst()
+                            .orElse(null);
+
+                    if (resolvedRefIp == null) {
+                        resolvedRefIp = userSessionRepository.findByUserIdAndIsActiveTrue(event.getUserId())
+                                .stream()
+                                .map(UserSession::getIpAddress)
+                                .findFirst()
+                                .orElse(null);
+                    }
+                }
+            }
+
             SecurityEventDetailDto.LocationDetail ref = new SecurityEventDetailDto.LocationDetail(
-                    "N/A",
+                    resolvedRefIp != null ? resolvedRefIp : "N/A",
                     event.getRefCity(),
                     event.getRefCountry(),
                     event.getRefLatitude(),

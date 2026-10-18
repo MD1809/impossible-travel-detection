@@ -46,6 +46,9 @@ public class SecurityEvent {
     @Column(name = "ref_longitude")
     private Double refLongitude;
 
+    @Column(name = "ref_ip", length = 45)
+    private String refIp;
+
     @Column(name = "ref_time")
     private LocalDateTime refTime;
 
@@ -192,6 +195,14 @@ public class SecurityEvent {
 
     public void setRefLongitude(Double refLongitude) {
         this.refLongitude = refLongitude;
+    }
+
+    public String getRefIp() {
+        return refIp;
+    }
+
+    public void setRefIp(String refIp) {
+        this.refIp = refIp;
     }
 
     public LocalDateTime getRefTime() {
