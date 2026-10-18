@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import StatCards from './components/StatCards';
 import EventDetailModal from './components/EventDetailModal';
-import LiveSimulationPanel from './components/LiveSimulationPanel';
 import { DashboardApi } from './services/api';
 import { Users, History, AlertCircle, Eye } from 'lucide-react';
 
@@ -192,8 +191,6 @@ export default function App() {
       {/* KPI Stat Cards */}
       <StatCards summary={summary} />
 
-      {/* Live Simulation Console */}
-      <LiveSimulationPanel onSimulationComplete={refreshAll} />
 
       {/* Navigation Tabs */}
       <div style={{
