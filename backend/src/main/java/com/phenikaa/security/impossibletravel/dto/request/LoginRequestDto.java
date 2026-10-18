@@ -1,10 +1,11 @@
-package com.phenikaa.security.impossibletravel.dto;
+package com.phenikaa.security.impossibletravel.dto.request;
 
 public class LoginRequestDto {
 
     private String username;
     private String password;
     private String ipAddress;
+    private String loginTime;
 
     public LoginRequestDto() {
     }
@@ -13,6 +14,13 @@ public class LoginRequestDto {
         this.username = username;
         this.password = password;
         this.ipAddress = ipAddress;
+    }
+
+    public LoginRequestDto(String username, String password, String ipAddress, String loginTime) {
+        this.username = username;
+        this.password = password;
+        this.ipAddress = ipAddress;
+        this.loginTime = loginTime;
     }
 
     public String getUsername() {
@@ -37,5 +45,13 @@ public class LoginRequestDto {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public String getLoginTime() {
+        return loginTime;
+    }
+
+    public void setLoginTime(String loginTime) {
+        this.loginTime = loginTime;
     }
 }

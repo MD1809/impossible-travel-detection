@@ -10,7 +10,7 @@
 			"name": "0. System Health & GeoIP",
 			"item": [
 				{
-					"name": "Health Check",
+					"name": "0.1 Kiểm tra trạng thái máy chủ (Health Check)",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -22,31 +22,46 @@
 					}
 				},
 				{
-					"name": "Test GeoIP Resolution (Hanoi)",
+					"name": "0.2 Tra cứu GeoIP Hà Nội (118.70.128.1)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/health/test-geoip?ip=118.70.1.1",
+							"raw": "{{base_url}}/health/test-geoip?ip=118.70.128.1",
 							"host": ["{{base_url}}"],
 							"path": ["health", "test-geoip"],
 							"query": [
-								{ "key": "ip", "value": "118.70.1.1" }
+								{ "key": "ip", "value": "118.70.128.1" }
 							]
 						}
 					}
 				},
 				{
-					"name": "Test GeoIP Resolution (New York)",
+					"name": "0.3 Tra cứu GeoIP New York (128.122.1.1)",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{base_url}}/health/test-geoip?ip=161.185.160.93",
+							"raw": "{{base_url}}/health/test-geoip?ip=128.122.1.1",
 							"host": ["{{base_url}}"],
 							"path": ["health", "test-geoip"],
 							"query": [
-								{ "key": "ip", "value": "161.185.160.93" }
+								{ "key": "ip", "value": "128.122.1.1" }
+							]
+						}
+					}
+				},
+				{
+					"name": "0.4 Tra cứu GeoIP Tokyo (220.100.0.1)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health/test-geoip?ip=220.100.0.1",
+							"host": ["{{base_url}}"],
+							"path": ["health", "test-geoip"],
+							"query": [
+								{ "key": "ip", "value": "220.100.0.1" }
 							]
 						}
 					}
@@ -63,7 +78,7 @@
 						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"fullName\": \"Nguyen Van A\"\n}"
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"fullName\": \"Sinh Vien Phenikaa\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/register",
@@ -73,7 +88,7 @@
 					}
 				},
 				{
-					"name": "1.2 Kịch bản 1: Đăng nhập hợp lệ tại Hà Nội (200 OK)",
+					"name": "1.2 Đăng nhập hợp lệ tại Hà Nội (200 OK)",
 					"event": [
 						{
 							"listen": "test",
@@ -93,7 +108,7 @@
 						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"113.160.224.1\"\n}"
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"118.70.128.1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -103,13 +118,13 @@
 					}
 				},
 				{
-					"name": "1.3 Kịch bản 2: Đăng nhập đồng thời tức thời từ New York (403 Blocked)",
+					"name": "1.3 Đăng nhập hợp lệ đồng thời cùng Hà Nội < 50km (200 OK)",
 					"request": {
 						"method": "POST",
 						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"161.185.160.93\"\n}"
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"14.162.144.1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -119,13 +134,13 @@
 					}
 				},
 				{
-					"name": "1.4 Kịch bản 3: Đăng nhập bất khả thi nối tiếp tới Tokyo (403 Blocked)",
+					"name": "1.4 Kịch bản 1: Đăng nhập đồng thời từ New York khi phiên đang mở (403 Blocked)",
 					"request": {
 						"method": "POST",
 						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"133.242.0.1\"\n}"
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"128.122.1.1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -135,13 +150,29 @@
 					}
 				},
 				{
-					"name": "1.5 Đăng nhập sai mật khẩu (401 Unauthorized)",
+					"name": "1.5 Đăng xuất toàn bộ phiên của tài khoản (Logout All)",
 					"request": {
 						"method": "POST",
 						"header": [{ "key": "Content-Type", "value": "application/json" }],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"WrongPass123!\",\n  \"ipAddress\": \"113.160.224.1\"\n}"
+							"raw": "{\n  \"username\": \"{{username}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/logout-all",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "logout-all"]
+						}
+					}
+				},
+				{
+					"name": "1.6 Kịch bản 2: Đăng nhập bất khả thi nối tiếp tới Tokyo sau đăng xuất (403 Blocked)",
+					"request": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"{{password}}\",\n  \"ipAddress\": \"220.100.0.1\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/auth/login",
@@ -151,16 +182,18 @@
 					}
 				},
 				{
-					"name": "1.6 Đăng xuất (Logout)",
+					"name": "1.7 Đăng nhập sai mật khẩu (401 Unauthorized)",
 					"request": {
 						"method": "POST",
-						"header": [
-							{ "key": "Authorization", "value": "Bearer {{session_token}}" }
-						],
+						"header": [{ "key": "Content-Type", "value": "application/json" }],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"{{username}}\",\n  \"password\": \"SaiMatKhau123!\",\n  \"ipAddress\": \"118.70.128.1\"\n}"
+						},
 						"url": {
-							"raw": "{{base_url}}/auth/logout",
+							"raw": "{{base_url}}/auth/login",
 							"host": ["{{base_url}}"],
-							"path": ["auth", "logout"]
+							"path": ["auth", "login"]
 						}
 					}
 				}
@@ -170,7 +203,7 @@
 			"name": "2. SOC Dashboard & Security Audit",
 			"item": [
 				{
-					"name": "2.1 Lấy thống kê KPI tổng hợp",
+					"name": "2.1 Lấy thống kê KPI tổng quan",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -182,7 +215,7 @@
 					}
 				},
 				{
-					"name": "2.2 Lấy danh sách sự kiện an ninh",
+					"name": "2.2 Lấy danh sách sự kiện vi phạm an ninh",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -210,7 +243,7 @@
 					}
 				},
 				{
-					"name": "2.4 Lấy lịch sử tất cả lần đăng nhập",
+					"name": "2.4 Lấy nhật ký hoạt động (Login History)",
 					"request": {
 						"method": "GET",
 						"header": [],
@@ -225,7 +258,7 @@
 					}
 				},
 				{
-					"name": "2.5 Lấy danh sách phiên đang hoạt động",
+					"name": "2.5 Lấy danh sách phiên đang hoạt động (Active Sessions)",
 					"request": {
 						"method": "GET",
 						"header": [],

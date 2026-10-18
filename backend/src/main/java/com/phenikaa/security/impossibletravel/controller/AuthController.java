@@ -1,9 +1,9 @@
 package com.phenikaa.security.impossibletravel.controller;
 
-import com.phenikaa.security.impossibletravel.dto.LoginRequestDto;
-import com.phenikaa.security.impossibletravel.dto.LoginResponseDto;
-import com.phenikaa.security.impossibletravel.dto.RegisterRequestDto;
-import com.phenikaa.security.impossibletravel.dto.RegisterResponseDto;
+import com.phenikaa.security.impossibletravel.dto.request.LoginRequestDto;
+import com.phenikaa.security.impossibletravel.dto.response.LoginResponseDto;
+import com.phenikaa.security.impossibletravel.dto.request.RegisterRequestDto;
+import com.phenikaa.security.impossibletravel.dto.response.RegisterResponseDto;
 import com.phenikaa.security.impossibletravel.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;

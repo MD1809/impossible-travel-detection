@@ -1,7 +1,7 @@
 package com.phenikaa.security.impossibletravel.service;
 
-import com.phenikaa.security.impossibletravel.dto.DashboardSummaryDto;
-import com.phenikaa.security.impossibletravel.dto.SecurityEventDetailDto;
+import com.phenikaa.security.impossibletravel.dto.response.DashboardSummaryDto;
+import com.phenikaa.security.impossibletravel.dto.response.SecurityEventDetailDto;
 import com.phenikaa.security.impossibletravel.entity.*;
 import com.phenikaa.security.impossibletravel.repository.LoginHistoryRepository;
 import com.phenikaa.security.impossibletravel.repository.SecurityEventRepository;

@@ -1,6 +1,6 @@
 package com.phenikaa.security.impossibletravel.controller;
 
-import com.phenikaa.security.impossibletravel.dto.SecurityEventDetailDto;
+import com.phenikaa.security.impossibletravel.dto.response.SecurityEventDetailDto;
 import com.phenikaa.security.impossibletravel.service.DashboardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

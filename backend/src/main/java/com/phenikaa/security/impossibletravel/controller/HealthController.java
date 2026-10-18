@@ -1,5 +1,6 @@
 package com.phenikaa.security.impossibletravel.controller;
 
+import com.phenikaa.security.impossibletravel.dto.response.GeoLocationDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,7 @@ public class HealthController {
     }
 
     @GetMapping("/test-geoip")
-    public ResponseEntity<com.phenikaa.security.impossibletravel.dto.GeoLocationDto> testGeoIp(
+    public ResponseEntity<GeoLocationDto> testGeoIp(
             @org.springframework.web.bind.annotation.RequestParam(defaultValue = "113.160.224.1") String ip) {
         return ResponseEntity.ok(geoLocationService.resolveIp(ip));
     }

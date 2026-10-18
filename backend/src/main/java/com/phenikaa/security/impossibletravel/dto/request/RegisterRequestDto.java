@@ -1,4 +1,4 @@
-package com.phenikaa.security.impossibletravel.dto;
+package com.phenikaa.security.impossibletravel.dto.request;
 
 public class RegisterRequestDto {
 

@@ -1,4 +1,4 @@
-package com.phenikaa.security.impossibletravel.dto;
+package com.phenikaa.security.impossibletravel.dto.response;
 
 public class GeoLocationDto {
 

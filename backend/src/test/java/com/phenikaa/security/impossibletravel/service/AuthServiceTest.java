@@ -1,6 +1,7 @@
 package com.phenikaa.security.impossibletravel.service;
 
-import com.phenikaa.security.impossibletravel.dto.*;
+import com.phenikaa.security.impossibletravel.dto.request.*;
+import com.phenikaa.security.impossibletravel.dto.response.*;
 import com.phenikaa.security.impossibletravel.entity.*;
 import com.phenikaa.security.impossibletravel.repository.LoginHistoryRepository;
 import com.phenikaa.security.impossibletravel.repository.SecurityEventRepository;
@@ -41,6 +42,8 @@ class AuthServiceTest {
         geoLocationService = Mockito.mock(GeoLocationService.class);
         impossibleTravelEngine = Mockito.mock(ImpossibleTravelEngine.class);
         passwordEncoder = new BCryptPasswordEncoder();
+
+        when(securityEventRepository.save(any(SecurityEvent.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         authService = new AuthService(
                 userRepository,

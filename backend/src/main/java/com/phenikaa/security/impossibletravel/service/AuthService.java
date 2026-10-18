@@ -1,6 +1,7 @@
 package com.phenikaa.security.impossibletravel.service;
 
-import com.phenikaa.security.impossibletravel.dto.*;
+import com.phenikaa.security.impossibletravel.dto.request.*;
+import com.phenikaa.security.impossibletravel.dto.response.*;
 import com.phenikaa.security.impossibletravel.entity.*;
 import com.phenikaa.security.impossibletravel.repository.LoginHistoryRepository;
 import com.phenikaa.security.impossibletravel.repository.SecurityEventRepository;
@@ -81,6 +82,13 @@ public class AuthService {
     @Transactional
     public LoginResponseDto login(LoginRequestDto request, String remoteIp) {
         LocalDateTime now = LocalDateTime.now();
+        if (request.getLoginTime() != null && !request.getLoginTime().trim().isEmpty()) {
+            try {
+                now = LocalDateTime.parse(request.getLoginTime().trim());
+            } catch (Exception e) {
+                log.warn("Không thể phân tích loginTime tuỳ chọn: {}, sử dụng thời gian hiện tại", request.getLoginTime());
+            }
+        }
         String effectiveIp = (request.getIpAddress() != null && !request.getIpAddress().trim().isEmpty())
                 ? request.getIpAddress().trim()
                 : (remoteIp != null && !remoteIp.isEmpty() ? remoteIp : "127.0.0.1");
@@ -139,7 +147,8 @@ public class AuthService {
                     : "Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn";
 
             // Ghi nhận Lịch sử đăng nhập bị chặn kèm ID của sự kiện an ninh
-            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEvent.getId());
+            Long savedEventId = (savedEvent != null) ? savedEvent.getId() : null;
+            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEventId);
 
             // Đóng gói Detection Details theo chuẩn 05_API_SPECIFICATION.md
             Map<String, Object> details = new LinkedHashMap<>();

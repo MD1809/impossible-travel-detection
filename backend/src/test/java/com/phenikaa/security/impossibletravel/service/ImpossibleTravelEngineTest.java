@@ -1,7 +1,7 @@
 package com.phenikaa.security.impossibletravel.service;
 
-import com.phenikaa.security.impossibletravel.dto.DetectionResultDto;
-import com.phenikaa.security.impossibletravel.dto.GeoLocationDto;
+import com.phenikaa.security.impossibletravel.dto.response.DetectionResultDto;
+import com.phenikaa.security.impossibletravel.dto.response.GeoLocationDto;
 import com.phenikaa.security.impossibletravel.entity.*;
 import com.phenikaa.security.impossibletravel.repository.LoginHistoryRepository;
 import com.phenikaa.security.impossibletravel.repository.SystemConfigRepository;
