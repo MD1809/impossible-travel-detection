@@ -43,7 +43,11 @@ export const DashboardApi = {
   getActiveSessions: () => api.get('/sessions/active'),
 
   // 6. Mô phỏng đăng nhập để test trực tiếp
-  login: (username, password, ipAddress) => api.post('/auth/login', { username, password, ipAddress }),
+  login: (username, password, ipAddress, loginTime) => {
+    const payload = { username, password, ipAddress };
+    if (loginTime) payload.loginTime = loginTime;
+    return api.post('/auth/login', payload);
+  },
 
   // 7. Đăng ký tài khoản
   register: (username, password, fullName) => api.post('/auth/register', { username, password, fullName }),

@@ -2,10 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Header from './components/Header';
 import StatCards from './components/StatCards';
 import EventDetailModal from './components/EventDetailModal';
+import LoginPage from './components/LoginPage';
 import { DashboardApi } from './services/api';
 import { Users, History, AlertCircle, Eye } from 'lucide-react';
 
 export default function App() {
+  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'login'
   const [summary, setSummary] = useState(null);
   const [events, setEvents] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -163,11 +165,27 @@ export default function App() {
     fetchEvents(newPage, selectedSeverity);
   };
 
+  // Nếu người dùng chọn xem Trang Đăng nhập Demo
+  if (currentView === 'login') {
+    return (
+      <LoginPage
+        onGoToDashboard={() => {
+          setCurrentView('dashboard');
+          refreshAll();
+        }}
+      />
+    );
+  }
+
   return (
     <div style={{ minHeight: '100vh', padding: '24px 28px', maxWidth: '1440px', margin: '0 auto' }}>
       
       {/* Header */}
-      <Header onRefresh={refreshAll} loading={loading} />
+      <Header
+        onRefresh={refreshAll}
+        loading={loading}
+        onGoToLogin={() => setCurrentView('login')}
+      />
 
       {/* Backend connection alert if error */}
       {error && (

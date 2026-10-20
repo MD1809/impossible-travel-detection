@@ -1,7 +1,7 @@
 import React from 'react';
-import { Shield, RefreshCw } from 'lucide-react';
+import { Shield, RefreshCw, LogIn } from 'lucide-react';
 
-export default function Header({ onRefresh, loading }) {
+export default function Header({ onRefresh, loading, onGoToLogin }) {
   return (
     <header className="glass-card" style={{ marginBottom: '24px', padding: '18px 24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
@@ -33,7 +33,32 @@ export default function Header({ onRefresh, loading }) {
         </div>
 
         {/* Right: Engine Specs & Refresh Action */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          {onGoToLogin && (
+            <button
+              onClick={onGoToLogin}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '8px 14px',
+                borderRadius: '8px',
+                background: 'rgba(37, 99, 235, 0.15)',
+                border: '1px solid rgba(59, 130, 246, 0.35)',
+                color: '#60a5fa',
+                fontWeight: '600',
+                fontSize: '0.8125rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.25)'; }}
+              onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(37, 99, 235, 0.15)'; }}
+            >
+              <LogIn size={15} />
+              <span>Trang Đăng Nhập Demo</span>
+            </button>
+          )}
+
           <button
             onClick={onRefresh}
             disabled={loading}
