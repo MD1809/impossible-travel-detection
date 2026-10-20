@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: '/api',
-  timeout: 10000,
+  timeout: 20000,
   headers: {
     'Content-Type': 'application/json'
   }
@@ -50,7 +50,10 @@ export const DashboardApi = {
   },
 
   // 7. Đăng ký tài khoản
-  register: (username, password, fullName) => api.post('/auth/register', { username, password, fullName }),
+  register: (username, password, fullName, email) => api.post('/auth/register', { username, password, fullName, email }),
+  verifyOtp: (challengeId, code) => api.post('/auth/otp/verify', { challengeId, code }),
+  resendOtp: (challengeId) => api.post('/auth/otp/resend', { challengeId }),
+  cancelOtp: (challengeId) => api.post('/auth/otp/cancel', { challengeId }),
 
   // 8. Đăng xuất
   logout: (token) => api.post('/auth/logout', {}, {

@@ -17,9 +17,11 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final com.phenikaa.security.impossibletravel.service.EmailOtpService emailOtpService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, com.phenikaa.security.impossibletravel.service.EmailOtpService emailOtpService) {
         this.authService = authService;
+        this.emailOtpService = emailOtpService;
     }
 
     /**
@@ -52,14 +54,29 @@ public class AuthController {
         }
 
         LoginResponseDto response = authService.login(request, remoteIp);
+        return authResponse(response);
+    }
 
-        if (response.isSuccess()) {
-            return ResponseEntity.ok(response);
-        } else if (response.getStatus() != null && response.getStatus() == 403) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-        }
+    public record OtpRequest(String challengeId, String code) {}
+
+    @PostMapping("/otp/verify")
+    public ResponseEntity<LoginResponseDto> verify(@RequestBody OtpRequest request) {
+        return authResponse(authService.verifyEmailCode(request.challengeId(), request.code()));
+    }
+
+    @PostMapping("/otp/resend")
+    public ResponseEntity<LoginResponseDto> resend(@RequestBody OtpRequest request) {
+        return authResponse(emailOtpService.resend(request.challengeId()));
+    }
+
+    @PostMapping("/otp/cancel")
+    public Map<String, Object> cancel(@RequestBody OtpRequest request) {
+        emailOtpService.cancel(request.challengeId());
+        return Map.of("success", true, "message", "Đã hủy yêu cầu xác minh");
+    }
+
+    private ResponseEntity<LoginResponseDto> authResponse(LoginResponseDto response) {
+        return ResponseEntity.status(response.getStatus() != null ? response.getStatus() : 400).body(response);
     }
 
     /**

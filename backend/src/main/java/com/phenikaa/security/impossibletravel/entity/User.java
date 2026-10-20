@@ -22,6 +22,17 @@ public class User {
     @Column(name = "full_name", length = 100)
     private String fullName;
 
+    @Column(length = 254)
+    private String email;
+
+    @Column(name = "email_verified", nullable = false)
+    private boolean emailVerified;
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private Role role = Role.ROLE_USER;

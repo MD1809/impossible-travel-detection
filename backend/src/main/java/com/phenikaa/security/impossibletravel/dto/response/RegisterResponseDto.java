@@ -6,6 +6,10 @@ public class RegisterResponseDto {
     private String message;
     private Long userId;
     private String username;
+    private LoginResponseDto verification;
+
+    public LoginResponseDto getVerification() { return verification; }
+    public void setVerification(LoginResponseDto verification) { this.verification = verification; }
 
     public RegisterResponseDto() {
     }

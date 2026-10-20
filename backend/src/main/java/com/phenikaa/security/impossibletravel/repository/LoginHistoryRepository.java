@@ -21,4 +21,6 @@ public interface LoginHistoryRepository extends JpaRepository<LoginHistory, Long
     Page<LoginHistory> findAllByOrderByLoginTimeDesc(Pageable pageable);
 
     long countByStatus(LoginStatus status);
+
+    boolean existsBySecurityEventIdAndStatus(Long securityEventId, LoginStatus status);
 }

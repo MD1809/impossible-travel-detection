@@ -3,11 +3,45 @@ import Header from './components/Header';
 import StatCards from './components/StatCards';
 import EventDetailModal from './components/EventDetailModal';
 import LoginPage from './components/LoginPage';
+import WelcomePage from './components/WelcomePage';
 import { DashboardApi } from './services/api';
 import { Users, History, AlertCircle, Eye } from 'lucide-react';
 
 export default function App() {
-  const [currentView, setCurrentView] = useState('dashboard'); // 'dashboard' | 'login'
+  const [pathname, setPathname] = useState(() => window.location.pathname.replace(/\/+$/, '') || '/login');
+  const [loginSession, setLoginSession] = useState(null);
+  const route = pathname === '/welcome' && !loginSession ? '/login' : pathname;
+
+  const navigate = useCallback((path) => {
+    window.history.replaceState(null, '', path);
+    setPathname(path);
+  }, []);
+
+  useEffect(() => {
+    if (window.location.pathname === '/' || (pathname === '/welcome' && route === '/login')) {
+      window.history.replaceState(null, '', route + window.location.search + window.location.hash);
+    }
+  }, [pathname, route]);
+
+  useEffect(() => {
+    const handlePopState = () => setPathname(window.location.pathname.replace(/\/+$/, '') || '/login');
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  if (route === '/login') return <LoginPage onLoginSuccess={(session) => {
+    setLoginSession(session);
+    navigate('/welcome');
+  }} />;
+  if (route === '/welcome') return <WelcomePage session={loginSession} onLogout={() => {
+    setLoginSession(null);
+    navigate('/login');
+  }} />;
+  if (pathname === '/admin/dashboard') return <Dashboard />;
+  return <main style={{ padding: '48px', textAlign: 'center' }}><h1>404</h1><p>Trang không tồn tại.</p></main>;
+}
+
+function Dashboard() {
   const [summary, setSummary] = useState(null);
   const [events, setEvents] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -87,9 +121,11 @@ export default function App() {
     const interval = setInterval(() => {
       fetchSummary();
       fetchEvents(currentPage, selectedSeverity);
+      fetchHistory();
+      fetchSessions();
     }, 10000);
     return () => clearInterval(interval);
-  }, [fetchSummary, fetchEvents, currentPage, selectedSeverity]);
+  }, [fetchSummary, fetchEvents, fetchHistory, fetchSessions, currentPage, selectedSeverity]);
 
   // Handle Event Detail Inspection
   const handleSelectEvent = async (id) => {
@@ -165,18 +201,6 @@ export default function App() {
     fetchEvents(newPage, selectedSeverity);
   };
 
-  // Nếu người dùng chọn xem Trang Đăng nhập Demo
-  if (currentView === 'login') {
-    return (
-      <LoginPage
-        onGoToDashboard={() => {
-          setCurrentView('dashboard');
-          refreshAll();
-        }}
-      />
-    );
-  }
-
   return (
     <div style={{ minHeight: '100vh', padding: '24px 28px', maxWidth: '1440px', margin: '0 auto' }}>
       
@@ -184,7 +208,6 @@ export default function App() {
       <Header
         onRefresh={refreshAll}
         loading={loading}
-        onGoToLogin={() => setCurrentView('login')}
       />
 
       {/* Backend connection alert if error */}

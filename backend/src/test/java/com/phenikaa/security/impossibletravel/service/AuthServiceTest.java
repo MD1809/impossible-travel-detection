@@ -52,7 +52,8 @@ class AuthServiceTest {
                 securityEventRepository,
                 geoLocationService,
                 impossibleTravelEngine,
-                passwordEncoder
+                passwordEncoder,
+                Mockito.mock(EmailOtpService.class)
         );
     }
 
@@ -60,6 +61,7 @@ class AuthServiceTest {
     @DisplayName("Đăng ký thành công người dùng mới")
     void testRegisterSuccess() {
         RegisterRequestDto request = new RegisterRequestDto("student01", "Password@123", "Nguyen Van A");
+        request.setEmail("student01@example.test");
         when(userRepository.existsByUsername("student01")).thenReturn(false);
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User u = invocation.getArgument(0);
@@ -67,6 +69,13 @@ class AuthServiceTest {
             return u;
         });
 
+        // Registration now returns a pending email-verification challenge.
+        EmailOtpService otp = Mockito.mock(EmailOtpService.class);
+        var pending = new LoginResponseDto();
+        pending.setVerificationRequired(true);
+        when(otp.issue(any(), eq("EMAIL_VERIFY"), isNull(), isNull())).thenReturn(pending);
+        authService = new AuthService(userRepository, userSessionRepository, loginHistoryRepository,
+            securityEventRepository, geoLocationService, impossibleTravelEngine, passwordEncoder, otp);
         RegisterResponseDto response = authService.register(request);
 
         assertTrue(response.isSuccess());

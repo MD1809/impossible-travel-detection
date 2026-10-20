@@ -7,6 +7,15 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
   const current = eventDetail.currentAttempt || {};
   const ref = eventDetail.referenceAttempt || {};
   const metrics = eventDetail.metrics || {};
+  const actionLabels = {
+    BLOCKED: 'Đã chặn đăng nhập',
+    OTP_PENDING: 'Đang chờ xác minh OTP',
+    OTP_VERIFIED: 'Đã xác minh OTP và cho phép đăng nhập',
+    OTP_LOCKED: 'Đã khóa xác minh do nhập sai mã',
+    OTP_CANCELLED: 'Đã hủy xác minh; không cấp phiên',
+    OTP_EXPIRED: 'Mã xác minh đã hết hạn',
+    OTP_SUPERSEDED: 'Đã thay bằng yêu cầu xác minh mới'
+  };
 
   const formatDateTime = (dateStr) => {
     if (!dateStr) return 'N/A';
@@ -108,6 +117,10 @@ export default function EventDetailModal({ eventId, eventDetail, onClose }) {
               : 'Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn'}
           </div>
         </div>
+
+        {eventDetail.actionTaken && <p style={{ marginBottom: '20px', color: '#cbd5e1', fontSize: '0.875rem' }}>
+          Kết quả xử lý: <strong>{actionLabels[eventDetail.actionTaken] || eventDetail.actionTaken}</strong>
+        </p>}
 
         {/* 2 Locations Comparison Cards */}
         <div style={{

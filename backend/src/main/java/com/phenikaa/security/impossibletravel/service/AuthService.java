@@ -28,6 +28,7 @@ public class AuthService {
     private final GeoLocationService geoLocationService;
     private final ImpossibleTravelEngine impossibleTravelEngine;
     private final PasswordEncoder passwordEncoder;
+    private final EmailOtpService emailOtpService;
 
     public AuthService(
             UserRepository userRepository,
@@ -36,7 +37,8 @@ public class AuthService {
             SecurityEventRepository securityEventRepository,
             GeoLocationService geoLocationService,
             ImpossibleTravelEngine impossibleTravelEngine,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder,
+            EmailOtpService emailOtpService) {
         this.userRepository = userRepository;
         this.userSessionRepository = userSessionRepository;
         this.loginHistoryRepository = loginHistoryRepository;
@@ -44,6 +46,7 @@ public class AuthService {
         this.geoLocationService = geoLocationService;
         this.impossibleTravelEngine = impossibleTravelEngine;
         this.passwordEncoder = passwordEncoder;
+        this.emailOtpService = emailOtpService;
     }
 
     /**
@@ -59,7 +62,16 @@ public class AuthService {
         }
 
         String username = request.getUsername().trim();
+        if (username.length() > 50) return RegisterResponseDto.error("Tên đăng nhập tối đa 50 ký tự");
+        String email = request.getEmail() == null ? "" : request.getEmail().trim().toLowerCase(Locale.ROOT);
+        if (email.length() > 254 || !email.matches("[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)+"))
+            return RegisterResponseDto.error("Vui lòng nhập địa chỉ email hợp lệ");
         if (userRepository.existsByUsername(username)) {
+            User existing = userRepository.findByUsername(username).orElseThrow();
+            if (!existing.isEmailVerified() && email.equals(existing.getEmail())
+                && passwordEncoder.matches(request.getPassword(), existing.getPasswordHash())) {
+                return registrationChallenge(existing);
+            }
             return RegisterResponseDto.error("Tên đăng nhập đã tồn tại trong hệ thống");
         }
 
@@ -69,11 +81,22 @@ public class AuthService {
         user.setFullName(request.getFullName() != null ? request.getFullName().trim() : username);
         user.setRole(Role.ROLE_USER);
         user.setIsActive(true);
+        user.setEmail(email);
+        user.setEmailVerified(false);
 
         User savedUser = userRepository.save(user);
         log.info("Đăng ký thành công người dùng mới: id={}, username={}", savedUser.getId(), savedUser.getUsername());
 
-        return RegisterResponseDto.success(savedUser.getId(), savedUser.getUsername());
+        return registrationChallenge(savedUser);
+    }
+
+    private RegisterResponseDto registrationChallenge(User user) {
+        LoginResponseDto verification = emailOtpService.issue(user, "EMAIL_VERIFY", null, null);
+        if (!Boolean.TRUE.equals(verification.getVerificationRequired())) return RegisterResponseDto.error(verification.getMessage());
+        RegisterResponseDto response = RegisterResponseDto.success(user.getId(), user.getUsername());
+        response.setMessage("Tài khoản đang chờ xác minh email");
+        response.setVerification(verification);
+        return response;
     }
 
     /**
@@ -108,6 +131,10 @@ public class AuthService {
         }
 
         User user = userOpt.get();
+        if (!Boolean.TRUE.equals(user.getIsActive())) return LoginResponseDto.unauthorized("Tài khoản đã bị vô hiệu hóa");
+        if (user.getEmail() != null && !user.isEmailVerified()) {
+            return emailOtpService.issue(user, "EMAIL_VERIFY", null, null);
+        }
 
         // 3. Thực thi Động cơ Impossible Travel
         DetectionResultDto detection = impossibleTravelEngine.evaluate(user.getId(), location, now);
@@ -147,9 +174,8 @@ public class AuthService {
                     ? "Phát hiện phiên đăng nhập đồng thời bất thường của tài khoản"
                     : "Phát hiện phiên đăng nhập bất khả thi về khoảng cách trong thời gian ngắn";
 
-            // Ghi nhận Lịch sử đăng nhập bị chặn kèm ID của sự kiện an ninh
+            // Keep the security event for auditing, but defer BLOCKED history while OTP is pending.
             Long savedEventId = (savedEvent != null) ? savedEvent.getId() : null;
-            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEventId);
 
             // Đóng gói Detection Details theo chuẩn 05_API_SPECIFICATION.md
             Map<String, Object> details = new LinkedHashMap<>();
@@ -180,15 +206,27 @@ public class AuthService {
             details.put("thresholdSpeedKmh", detection.getThresholdSpeedKmh());
             details.put("action", "BLOCKED");
 
+            if (user.isEmailVerified() && user.getEmail() != null) {
+                LoginResponseDto pending = emailOtpService.issue(user, "LOGIN", location, savedEventId);
+                if (!Boolean.TRUE.equals(pending.getVerificationRequired())) {
+                    pending.setDetectionDetails(details);
+                    saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEventId);
+                }
+                return pending;
+            }
+            saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.BLOCKED, blockedReason, savedEventId);
             return LoginResponseDto.forbidden(
-                    "Cảnh báo an ninh: Phát hiện di chuyển bất khả thi (Impossible Travel Detected)", details);
+                    "Phát hiện đăng nhập bất thường. Tài khoản chưa có email đã xác minh nên không thể xác minh bằng OTP.", details);
         }
 
-        // 4. Đăng nhập thành công hợp lệ
+        return createSession(user, effectiveIp, location, now);
+    }
+
+    private LoginResponseDto createSession(User user, String effectiveIp, GeoLocationDto location, LocalDateTime now) {
         saveLoginHistory(user.getId(), user.getUsername(), effectiveIp, location, now, LoginStatus.SUCCESS, null);
 
         // Tạo phiên làm việc mới trong user_sessions
-        String sessionToken = "sess_" + UUID.randomUUID().toString().replace("-", "").substring(0, 16);
+        String sessionToken = "sess_" + UUID.randomUUID().toString().replace("-", "");
         UserSession session = new UserSession();
         session.setUserId(user.getId());
         session.setSessionToken(sessionToken);
@@ -211,6 +249,27 @@ public class AuthService {
         );
 
         return LoginResponseDto.success(sessionToken, userInfo, locDto);
+    }
+
+    @Transactional
+    public LoginResponseDto verifyEmailCode(String challengeId, String code) {
+        EmailOtpService.Decision decision = emailOtpService.verify(challengeId, code);
+        if (decision.error() != null) return decision.error();
+        EmailChallenge challenge = decision.challenge();
+        User user = userRepository.findById(challenge.getUserId()).orElseThrow();
+        if ("EMAIL_VERIFY".equals(challenge.getPurpose())) {
+            user.setEmailVerified(true);
+            userRepository.save(user);
+            LoginResponseDto response = new LoginResponseDto();
+            response.setSuccess(true); response.setStatus(200); response.setPurpose("EMAIL_VERIFY");
+            response.setMessage("Đã xác minh email. Bạn có thể đăng nhập.");
+            return response;
+        }
+        GeoLocationDto location = GeoLocationDto.builder().ipAddress(challenge.getIpAddress())
+            .city(challenge.getCity()).country(challenge.getCountry()).latitude(challenge.getLatitude())
+            .longitude(challenge.getLongitude()).resolved(true).build();
+        // The approved attempt is stored server-side; the client cannot substitute another IP/account.
+        return createSession(user, challenge.getIpAddress(), location, LocalDateTime.now());
     }
 
     /**

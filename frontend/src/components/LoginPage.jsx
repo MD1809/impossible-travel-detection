@@ -1,521 +1,184 @@
-import React, { useState } from 'react';
-import {
-  Shield,
-  Lock,
-  User,
-  Globe,
-  MapPin,
-  AlertTriangle,
-  CheckCircle2,
-  LayoutDashboard,
-  LogOut,
-  RefreshCw,
-  Clock,
-  Gauge
-} from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Eye, EyeOff, ArrowRight, ShieldAlert } from 'lucide-react';
 import { DashboardApi } from '../services/api';
+import './LoginPage.css';
 
 const IP_PRESETS = [
-  { label: 'Hà Nội, Việt Nam', ip: '118.70.128.1', flag: '🇻🇳', desc: 'Vị trí máy chủ / Trụ sở chính' },
-  { label: 'TP. Hồ Chí Minh, VN', ip: '1.53.255.1', flag: '🇻🇳', desc: 'Cách Hà Nội ~1.138 km' },
-  { label: 'Tokyo, Nhật Bản', ip: '220.100.0.1', flag: '🇯🇵', desc: 'Cách Hà Nội ~3.650 km' },
-  { label: 'New York, Hoa Kỳ', ip: '128.122.1.1', flag: '🇺🇸', desc: 'Cách Hà Nội ~13.150 km' }
+  { label: 'Việt Nam', ip: '118.70.128.1' },
+  { label: 'Nhật Bản', ip: '220.100.0.1' },
+  { label: 'Hoa Kỳ', ip: '128.122.1.1' }
 ];
 
-export default function LoginPage({ onGoToDashboard }) {
-  const [username, setUsername] = useState('student01');
-  const [password, setPassword] = useState('Password123!');
-  const [ipAddress, setIpAddress] = useState('118.70.128.1');
+export default function LoginPage({ onLoginSuccess }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [ipAddress, setIpAddress] = useState(IP_PRESETS[0].ip);
+  const [customIp, setCustomIp] = useState('');
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null); // { type: 'success' | 'blocked' | 'error', data: ... }
-  const [logoutMessage, setLogoutMessage] = useState(null);
+  const [result, setResult] = useState(null);
+  const [registering, setRegistering] = useState(false);
+  const blockedDialog = useRef(null);
+  const [challenge, setChallenge] = useState(null);
+  const [code, setCode] = useState('');
+  const [otpMessage, setOtpMessage] = useState('');
+  const [otpBusy, setOtpBusy] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
 
-  const handleSelectPreset = (presetIp) => {
-    setIpAddress(presetIp);
-    setResult(null);
-    setLogoutMessage(null);
-  };
+  useEffect(() => {
+    if (!challenge) return;
+    const timer = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(timer);
+  }, [challenge]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setResult(null);
-    setLogoutMessage(null);
+  useEffect(() => {
+    if (result?.type === 'blocked' || challenge) {
+      if (!blockedDialog.current.open) blockedDialog.current.showModal();
+    } else {
+      blockedDialog.current.close();
+    }
+  }, [result, challenge]);
 
+  function openChallenge(value) {
+    setChallenge(value);
+    setCode('');
+    setOtpMessage('');
+    setNow(Date.now());
+  }
+
+  async function verifyOtp(event) {
+    event.preventDefault();
+    if (otpBusy) return;
+    setOtpBusy(true);
+    setOtpMessage('');
     try {
-      const response = await DashboardApi.login(username.trim(), password, ipAddress.trim());
-      setResult({
-        type: 'success',
-        title: 'Đăng nhập thành công',
-        data: response
-      });
-    } catch (err) {
-      if (err.status === 403 || err.blocked) {
-        setResult({
-          type: 'blocked',
-          title: 'CẢNH BÁO: TRUY CẬP BỊ TỪ CHỐI!',
-          subtitle: err.message || 'Phát hiện hành vi di chuyển bất khả thi (Impossible Travel)',
-          data: err
-        });
+      const response = await DashboardApi.verifyOtp(challenge.challengeId, code);
+      if (!response.success) throw response;
+      setChallenge(null);
+      if (response.purpose === 'EMAIL_VERIFY') {
+        setRegistering(false);
+        setResult({ type: 'success', title: 'Đã xác minh email', message: response.message });
       } else {
-        setResult({
-          type: 'error',
-          title: 'Đăng nhập thất bại',
-          subtitle: err.message || 'Thông tin tài khoản hoặc mật khẩu không chính xác',
-          data: err
-        });
+        onLoginSuccess(response);
       }
+    } catch (error) {
+      setOtpMessage(error.message || 'Không thể xác minh mã. Vui lòng thử lại.');
     } finally {
-      setLoading(false);
+      setOtpBusy(false);
     }
-  };
+  }
 
-  const handleLogoutAll = async () => {
-    if (!username.trim()) return;
-    setLoading(true);
+  async function resendOtp() {
+    if (otpBusy) return;
+    setOtpBusy(true);
     try {
-      await DashboardApi.logoutAll(username.trim());
-      setLogoutMessage(`Đã dọn sạch tất cả phiên đang mở của tài khoản "${username}". Bạn có thể bắt đầu phiên thử nghiệm mới!`);
-      setResult(null);
-    } catch (err) {
-      setLogoutMessage('Lỗi khi đăng xuất các phiên: ' + (err.message || ''));
+      const response = await DashboardApi.resendOtp(challenge.challengeId);
+      openChallenge(response);
+      setOtpMessage('Đã gửi mã mới. Mã cũ không còn hiệu lực.');
+    } catch (error) {
+      setOtpMessage(error.message || 'Không thể gửi lại mã.');
+    } finally { setOtpBusy(false); }
+  }
+
+  async function dismissPopup() {
+    if (otpBusy) return;
+    if (challenge) {
+      setOtpBusy(true);
+      try {
+        await DashboardApi.cancelOtp(challenge.challengeId);
+        setChallenge(null);
+      } catch (error) {
+        setOtpMessage(error.message || 'Không thể hủy yêu cầu. Vui lòng thử lại.');
+        return;
+      } finally { setOtpBusy(false); }
+    }
+    setResult(null);
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (loading) return;
+    setLoading(true);
+    setResult(null);
+    try {
+      if (registering) {
+        const response = await DashboardApi.register(username.trim(), password, username.trim(), email.trim());
+        if (!response.success) throw response;
+        openChallenge(response.verification);
+      } else {
+        const response = await DashboardApi.login(username.trim(), password, (ipAddress === 'custom' ? customIp : ipAddress).trim());
+        if (response.verificationRequired) { openChallenge(response); return; }
+        if (!response.success) throw response;
+        onLoginSuccess(response);
+      }
+    } catch (error) {
+      const blocked = Boolean(error.detectionDetails);
+      setResult({ type: blocked ? 'blocked' : 'error', title: blocked ? 'Đăng nhập bị chặn' : registering ? 'Không thể tạo tài khoản' : 'Đăng nhập thất bại', message: error.message || 'Không thể kết nối đến máy chủ. Vui lòng thử lại.', details: error.detectionDetails });
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px 16px',
-      background: 'radial-gradient(circle at 50% 15%, #1e293b 0%, #0a0e17 100%)',
-      fontFamily: 'system-ui, -apple-system, sans-serif'
-    }}>
-
-      {/* Top Bar Switch to Dashboard */}
-      <div style={{
-        width: '100%',
-        maxWidth: '480px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: '16px'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa' }}>
-          <Shield size={20} />
-          <span style={{ fontSize: '0.875rem', fontWeight: '700', letterSpacing: '0.05em' }}>
-            DEMO LOGIN PORTAL
-          </span>
-        </div>
-
-        {onGoToDashboard && (
-          <button
-            onClick={onGoToDashboard}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '6px 14px',
-              fontSize: '0.8125rem',
-              fontWeight: '600',
-              color: '#38bdf8',
-              background: 'rgba(56, 189, 248, 0.1)',
-              border: '1px solid rgba(56, 189, 248, 0.3)',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease'
-            }}
-          >
-            <LayoutDashboard size={14} />
-            <span>Mở SOC Dashboard</span>
-          </button>
-        )}
-      </div>
-
-      {/* Main Login Card */}
-      <div
-        className="glass-card"
-        style={{
-          width: '100%',
-          maxWidth: '480px',
-          background: 'rgba(22, 27, 38, 0.9)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid #2d3748',
-          borderRadius: '16px',
-          padding: '32px 28px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6)'
-        }}
-      >
-        {/* Card Header */}
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <div style={{
-            width: '56px',
-            height: '56px',
-            margin: '0 auto 12px auto',
-            borderRadius: '14px',
-            background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(59, 130, 246, 0.1) 100%)',
-            border: '1px solid rgba(59, 130, 246, 0.4)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: '#60a5fa'
-          }}>
-            <Lock size={26} />
-          </div>
-          <h2 style={{ fontSize: '1.375rem', fontWeight: '800', color: '#f8fafc', margin: '0 0 4px 0' }}>
-            Đăng Nhập Hệ Thống
-          </h2>
-          <p style={{ fontSize: '0.8125rem', color: '#94a3b8', margin: 0 }}>
-            Kiểm tra và xác thực an ninh theo ngữ cảnh vị trí địa lý
-          </p>
-        </div>
-
-        {/* Login Form */}
-        <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          
-          {/* Username */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: '600', color: '#cbd5e1', marginBottom: '6px' }}>
-              Tên đăng nhập
-            </label>
-            <div style={{ position: 'relative' }}>
-              <User size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
-              <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                placeholder="Nhập username"
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 12px 10px 38px',
-                  background: '#0f141f',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  color: '#f8fafc',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-              />
+    <main className="login-page">
+      <section className="login-card" aria-labelledby="login-title">
+        <h1 id="login-title">{registering ? 'Tạo tài khoản' : 'Đăng nhập'}</h1>
+        <p className="login-description">{registering ? 'Tạo tài khoản để bắt đầu.' : 'Truy cập tài khoản đăng nhập.'}</p>
+        <form id="login-form" onSubmit={handleSubmit}>
+          <fieldset disabled={loading} className="login-fields">
+            <label htmlFor="login-username">Tên đăng nhập</label>
+            <input id="login-username" name="username" autoComplete="username" required pattern=".*\S.*" maxLength={100} value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Nhập tên đăng nhập" />
+            {registering && <>
+              <label htmlFor="register-email">Email</label>
+              <input id="register-email" name="email" type="email" autoComplete="email" required maxLength={254} value={email} onChange={(event) => setEmail(event.target.value)} placeholder="Nhập email nhận mã xác minh" />
+            </>}
+            <label htmlFor="login-password">Mật khẩu</label>
+            <div className="login-password">
+              <input id="login-password" name="password" type={showPassword ? 'text' : 'password'} autoComplete={registering ? 'new-password' : 'current-password'} required value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Nhập mật khẩu" />
+              <button type="button" className="login-eye" onClick={() => setShowPassword(!showPassword)} aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'} aria-pressed={showPassword}>{showPassword ? <EyeOff size={18} /> : <Eye size={18} />}</button>
             </div>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: '600', color: '#cbd5e1', marginBottom: '6px' }}>
-              Mật khẩu
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Lock size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Nhập mật khẩu"
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 12px 10px 38px',
-                  background: '#0f141f',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  color: '#f8fafc',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-          </div>
-
-          {/* IP Address Selection */}
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <label style={{ fontSize: '0.8125rem', fontWeight: '600', color: '#cbd5e1' }}>
-                Địa chỉ IP đăng nhập (Vị trí)
-              </label>
-              <span style={{ fontSize: '0.75rem', color: '#60a5fa' }}>Chọn vị trí thử nghiệm</span>
-            </div>
-
-            <div style={{ position: 'relative', marginBottom: '10px' }}>
-              <Globe size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#64748b' }} />
-              <input
-                type="text"
-                value={ipAddress}
-                onChange={(e) => setIpAddress(e.target.value)}
-                placeholder="Nhập IP (VD: 118.70.128.1)"
-                required
-                style={{
-                  width: '100%',
-                  padding: '10px 12px 10px 38px',
-                  background: '#0f141f',
-                  border: '1px solid #334155',
-                  borderRadius: '8px',
-                  color: '#38bdf8',
-                  fontFamily: 'monospace',
-                  fontSize: '0.875rem',
-                  outline: 'none',
-                  boxSizing: 'border-box'
-                }}
-              />
-            </div>
-
-            {/* IP Preset Buttons */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
-              {IP_PRESETS.map((p) => {
-                const isSelected = ipAddress === p.ip;
-                return (
-                  <button
-                    key={p.ip}
-                    type="button"
-                    onClick={() => handleSelectPreset(p.ip)}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'flex-start',
-                      padding: '8px 10px',
-                      background: isSelected ? 'rgba(37, 99, 235, 0.2)' : '#161c28',
-                      border: `1px solid ${isSelected ? '#3b82f6' : '#283244'}`,
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      textAlign: 'left',
-                      transition: 'all 0.15s ease'
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.78125rem', fontWeight: '600', color: isSelected ? '#93c5fd' : '#e2e8f0' }}>
-                      <span>{p.flag}</span>
-                      <span>{p.label}</span>
-                    </div>
-                    <span style={{ fontSize: '0.71875rem', color: '#64748b', fontFamily: 'monospace', marginTop: '2px' }}>
-                      {p.ip}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '8px' }}>
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary"
-              style={{
-                width: '100%',
-                padding: '12px',
-                fontSize: '0.9375rem',
-                fontWeight: '700',
-                justifyContent: 'center',
-                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
-                cursor: loading ? 'not-allowed' : 'pointer'
-              }}
-            >
-              {loading ? (
-                <>
-                  <RefreshCw size={16} style={{ animation: 'spin 1s linear infinite' }} />
-                  <span>Đang xử lý xác thực...</span>
-                </>
-              ) : (
-                <>
-                  <Lock size={16} />
-                  <span>Đăng Nhập</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleLogoutAll}
-              disabled={loading}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px',
-                padding: '8px',
-                background: 'transparent',
-                border: '1px dashed #334155',
-                borderRadius: '8px',
-                color: '#94a3b8',
-                fontSize: '0.75rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseOver={(e) => { e.currentTarget.style.color = '#f87171'; e.currentTarget.style.borderColor = '#f87171'; }}
-              onMouseOut={(e) => { e.currentTarget.style.color = '#94a3b8'; e.currentTarget.style.borderColor = '#334155'; }}
-            >
-              <LogOut size={13} />
-              <span>Đăng xuất tất cả phiên cũ (Dọn sạch để test lại)</span>
-            </button>
-          </div>
+            <button className="login-submit" type="submit">{loading ? 'Đang xử lý…' : registering ? 'Tạo tài khoản' : 'Đăng nhập'}<ArrowRight size={17} aria-hidden="true" /></button>
+          </fieldset>
         </form>
-
-        {/* Logout Notice */}
-        {logoutMessage && (
-          <div style={{
-            marginTop: '16px',
-            padding: '10px 14px',
-            background: 'rgba(56, 189, 248, 0.1)',
-            border: '1px solid rgba(56, 189, 248, 0.3)',
-            borderRadius: '8px',
-            fontSize: '0.8125rem',
-            color: '#38bdf8'
-          }}>
-            {logoutMessage}
+        <button className="login-switch" disabled={loading} onClick={() => { setRegistering(!registering); setResult(null); }}>{registering ? 'Đã có tài khoản? Đăng nhập' : 'Chưa có tài khoản? Tạo tài khoản thử nghiệm'}</button>
+        <div aria-live="polite" aria-atomic="true">
+          {result && result.type !== 'blocked' && <section className={`login-result login-result-${result.type}`}>
+            <h2>{result.title}</h2>
+            <p>{result.message}</p>
+          </section>}
+        </div>
+      </section>
+      <dialog ref={blockedDialog} className="login-blocked-dialog" role="alertdialog" aria-labelledby="blocked-title" aria-describedby="blocked-description" onCancel={(event) => { event.preventDefault(); dismissPopup(); }}>
+        <ShieldAlert size={44} aria-hidden="true" />
+        <h2 id="blocked-title">{challenge?.purpose === 'EMAIL_VERIFY' ? 'Xác minh email của bạn' : 'Phát hiện đăng nhập bất thường'}</h2>
+        <p id="blocked-description">{challenge ? challenge.message : result?.message || 'Lần đăng nhập này đã bị chặn để bảo vệ tài khoản của bạn.'}</p>
+        {challenge ? <>
+          <p>Mã đã gửi đến <strong>{challenge.maskedEmail}</strong>.</p>
+          <form className="login-fields" onSubmit={verifyOtp}>
+            <label htmlFor="email-otp">Mã xác minh gồm 6 chữ số</label>
+            <input id="email-otp" name="otp" inputMode="numeric" autoComplete="one-time-code" pattern="[0-9]{6}" maxLength={6} required value={code} disabled={otpBusy} onChange={(event) => setCode(event.target.value.replace(/[^0-9]/g, ''))} />
+            <p className="otp-expiry">{now >= Date.parse(challenge.expiresAt) ? 'Mã đã hết hạn. Hủy và thực hiện lại yêu cầu.' : `Mã còn hiệu lực ${Math.ceil((Date.parse(challenge.expiresAt) - now) / 1000)} giây.`}</p>
+            <button className="login-submit" type="submit" disabled={otpBusy || now >= Date.parse(challenge.expiresAt)}>{otpBusy ? 'Đang xử lý…' : 'Xác minh'}</button>
+          </form>
+          <p className="otp-feedback" role="status">{otpMessage}</p>
+          <div className="otp-actions">
+            <button type="button" disabled={otpBusy || now < Date.parse(challenge.resendAvailableAt) || now >= Date.parse(challenge.expiresAt)} onClick={resendOtp}>{now < Date.parse(challenge.resendAvailableAt) ? `Gửi lại sau ${Math.ceil((Date.parse(challenge.resendAvailableAt) - now) / 1000)}s` : 'Gửi lại mã'}</button>
+            <button type="button" onClick={dismissPopup} disabled={otpBusy}>Hủy</button>
           </div>
-        )}
-
-        {/* Result Message Box */}
-        {result && (
-          <div style={{
-            marginTop: '18px',
-            padding: '16px',
-            borderRadius: '10px',
-            background: result.type === 'success'
-              ? 'rgba(34, 197, 94, 0.1)'
-              : result.type === 'blocked'
-              ? 'rgba(239, 68, 68, 0.12)'
-              : 'rgba(245, 158, 11, 0.1)',
-            border: `1px solid ${
-              result.type === 'success'
-                ? 'rgba(34, 197, 94, 0.4)'
-                : result.type === 'blocked'
-                ? 'rgba(239, 68, 68, 0.45)'
-                : 'rgba(245, 158, 11, 0.4)'
-            }`,
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px'
-          }}>
-            {/* Result Header */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              color: result.type === 'success' ? '#4ade80' : result.type === 'blocked' ? '#f87171' : '#fbbf24',
-              fontWeight: '700',
-              fontSize: '0.9375rem'
-            }}>
-              {result.type === 'success' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}
-              <span>{result.title}</span>
-            </div>
-
-            {/* Subtitle / Reason */}
-            {result.subtitle && (
-              <p style={{ margin: 0, fontSize: '0.8125rem', color: '#e2e8f0', lineHeight: 1.4 }}>
-                {result.subtitle}
-              </p>
-            )}
-
-            {/* Details for SUCCESS */}
-            {result.type === 'success' && (
-              <div style={{ fontSize: '0.8125rem', color: '#94a3b8', display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <MapPin size={13} color="#4ade80" />
-                  <span>Vị trí xác thực: <strong style={{ color: '#f1f5f9' }}>{result.data?.city || 'Hanoi'}, {result.data?.country || 'Vietnam'}</strong></span>
-                </div>
-                <div>Địa chỉ IP: <span className="code-pill">{result.data?.ipAddress || ipAddress}</span></div>
-                {onGoToDashboard && (
-                  <button
-                    onClick={onGoToDashboard}
-                    style={{
-                      marginTop: '8px',
-                      padding: '8px 12px',
-                      background: 'rgba(34, 197, 94, 0.2)',
-                      border: '1px solid rgba(34, 197, 94, 0.4)',
-                      borderRadius: '6px',
-                      color: '#4ade80',
-                      fontSize: '0.8125rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Xem phiên đang mở trên SOC Dashboard →
-                  </button>
-                )}
-              </div>
-            )}
-
-            {/* Details for BLOCKED (Impossible Travel) */}
-            {result.type === 'blocked' && (
-              <div style={{
-                marginTop: '6px',
-                padding: '10px',
-                background: '#121722',
-                borderRadius: '8px',
-                fontSize: '0.78125rem',
-                color: '#94a3b8',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '6px'
-              }}>
-                {result.data?.detectionDetails && (
-                  <>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span>Quy tắc vi phạm:</span>
-                      <strong style={{ color: '#f87171' }}>{result.data.detectionDetails.ruleTriggered}</strong>
-                    </div>
-                    {result.data.detectionDetails.metrics && (
-                      <>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>Khoảng cách di chuyển:</span>
-                          <strong style={{ color: '#cbd5e1' }}>{result.data.detectionDetails.metrics.distanceKm?.toFixed(1)} km</strong>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>Vận tốc tính toán:</span>
-                          <strong style={{ color: '#f87171' }}>
-                            {result.data.detectionDetails.metrics.calculatedSpeedKmh?.toLocaleString('vi-VN', { maximumFractionDigits: 1 })} km/h
-                          </strong>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                          <span>Ngưỡng tối đa cho phép:</span>
-                          <span style={{ color: '#64748b' }}>900.0 km/h</span>
-                        </div>
-                      </>
-                    )}
-                  </>
-                )}
-
-                <div style={{ marginTop: '4px', paddingTop: '6px', borderTop: '1px solid #232c3d', color: '#cbd5e1', fontSize: '0.75rem' }}>
-                  🛡️ <em>Sự kiện đã được ghi nhận vào nhật ký an ninh. Bạn có thể mở SOC Dashboard để theo dõi đường nối vi phạm trên bản đồ.</em>
-                </div>
-
-                {onGoToDashboard && (
-                  <button
-                    onClick={onGoToDashboard}
-                    style={{
-                      marginTop: '6px',
-                      padding: '8px 12px',
-                      background: 'rgba(239, 68, 68, 0.2)',
-                      border: '1px solid rgba(239, 68, 68, 0.4)',
-                      borderRadius: '6px',
-                      color: '#fca5a5',
-                      fontSize: '0.8125rem',
-                      fontWeight: '600',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    Mở SOC Dashboard xem sự kiện bị chặn →
-                  </button>
-                )}
-              </div>
-            )}
-          </div>
-        )}
-
-      </div>
-
-      {/* Footer Info */}
-      <div style={{ marginTop: '20px', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>
-        Impossible Travel Detection System • Đại học Phenikaa
-      </div>
-
-    </div>
+        </> : <button type="button" className="login-submit" onClick={dismissPopup}>Đã hiểu</button>}
+      </dialog>
+      {!registering && <aside className="login-simulation" aria-label="Cấu hình IP mô phỏng">
+        <label htmlFor="login-ip">Vị trí đăng nhập</label>
+        <select id="login-ip" value={ipAddress} disabled={loading} onChange={(event) => setIpAddress(event.target.value)}>
+          {IP_PRESETS.map((preset) => <option key={preset.ip} value={preset.ip}>{preset.label} ({preset.ip})</option>)}
+          <option value="custom">IP tùy chỉnh</option>
+        </select>
+        {ipAddress === 'custom' && <div className="login-custom-ip">
+          <label htmlFor="custom-ip">Địa chỉ IP tùy chỉnh</label>
+          <input id="custom-ip" name="ipAddress" form="login-form" type="text" required pattern=".*\S.*" maxLength={45} value={customIp} disabled={loading} onChange={(event) => setCustomIp(event.target.value)} placeholder="Ví dụ: 8.8.8.8" autoComplete="off" spellCheck={false} />
+        </div>}
+      </aside>}
+    </main>
   );
 }

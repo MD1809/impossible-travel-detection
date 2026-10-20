@@ -15,6 +15,60 @@ public class LoginResponseDto {
     private UserInfoDto userInfo;
     private LocationDto location;
     private Map<String, Object> detectionDetails;
+    private Boolean verificationRequired;
+    private String challengeId;
+    private String purpose;
+    private String maskedEmail;
+    private java.time.Instant expiresAt;
+    private java.time.Instant resendAvailableAt;
+
+    public Boolean getVerificationRequired() {
+        return verificationRequired;
+    }
+
+    public void setVerificationRequired(Boolean value) {
+        verificationRequired = value;
+    }
+
+    public String getChallengeId() {
+        return challengeId;
+    }
+
+    public void setChallengeId(String value) {
+        challengeId = value;
+    }
+
+    public String getPurpose() {
+        return purpose;
+    }
+
+    public void setPurpose(String value) {
+        purpose = value;
+    }
+
+    public String getMaskedEmail() {
+        return maskedEmail;
+    }
+
+    public void setMaskedEmail(String value) {
+        maskedEmail = value;
+    }
+
+    public java.time.Instant getExpiresAt() {
+        return expiresAt;
+    }
+
+    public void setExpiresAt(java.time.Instant value) {
+        expiresAt = value;
+    }
+
+    public java.time.Instant getResendAvailableAt() {
+        return resendAvailableAt;
+    }
+
+    public void setResendAvailableAt(java.time.Instant value) {
+        resendAvailableAt = value;
+    }
 
     public LoginResponseDto() {
     }

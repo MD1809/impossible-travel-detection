@@ -22,7 +22,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {
+    "spring.datasource.url=jdbc:h2:mem:legacy-e2e;MODE=MySQL;DB_CLOSE_DELAY=-1",
+    "spring.datasource.driver-class-name=org.h2.Driver", "spring.datasource.username=sa", "spring.datasource.password=",
+    "spring.jpa.hibernate.ddl-auto=create-drop", "spring.sql.init.mode=never", "app.email.migrate=false",
+    "app.otp.expiration-scan-enabled=false"
+})
 @AutoConfigureMockMvc
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -38,6 +43,8 @@ class ImpossibleTravelIntegrationTest {
     private static final String TEST_USER = "e2e_user_" + System.currentTimeMillis();
     private static final String TEST_PASS = "Password@123";
     private String capturedSessionToken;
+    @org.springframework.boot.test.mock.mockito.MockBean
+    private com.phenikaa.security.impossibletravel.service.OtpMailService mail;
 
     @Test
     @Order(1)
@@ -57,16 +64,23 @@ class ImpossibleTravelIntegrationTest {
                 {
                     "username": "%s",
                     "password": "%s",
-                    "fullName": "Sinh Vien E2E"
+                    "fullName": "Sinh Vien E2E",
+                    "email": "e2e@example.test"
                 }
                 """, TEST_USER, TEST_PASS);
 
-        mockMvc.perform(post("/api/auth/register")
+        var registration = mockMvc.perform(post("/api/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(registerJson))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.success", is(true)))
-                .andExpect(jsonPath("$.username", is(TEST_USER)));
+                .andExpect(jsonPath("$.username", is(TEST_USER))).andReturn();
+        var code = org.mockito.ArgumentCaptor.forClass(String.class);
+        org.mockito.Mockito.verify(mail).send(org.mockito.ArgumentMatchers.eq("e2e@example.test"), code.capture(), org.mockito.ArgumentMatchers.eq(true), org.mockito.ArgumentMatchers.isNull());
+        String challengeId = objectMapper.readTree(registration.getResponse().getContentAsString()).path("verification").path("challengeId").asText();
+        mockMvc.perform(post("/api/auth/otp/verify").contentType(MediaType.APPLICATION_JSON)
+            .content(objectMapper.writeValueAsString(java.util.Map.of("challengeId", challengeId, "code", code.getValue()))))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.success", is(true)));
     }
 
     @Test
@@ -97,7 +111,7 @@ class ImpossibleTravelIntegrationTest {
 
     @Test
     @Order(4)
-    @DisplayName("E2E-4: Kịch bản 1 - Đăng nhập đồng thời tức thời từ New York (161.185.160.93) -> 403 Forbidden")
+    @DisplayName("E2E-4: Đăng nhập bất thường từ New York -> 202, chờ OTP và chưa cấp phiên")
     void testConcurrentLoginFromNewYorkBlocked() throws Exception {
         String loginJson = String.format("""
                 {
@@ -110,11 +124,10 @@ class ImpossibleTravelIntegrationTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(loginJson))
-                .andExpect(status().isForbidden())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.success", is(false)))
-                .andExpect(jsonPath("$.detectionDetails.ruleTriggered", is("CONCURRENT_IMPOSSIBLE_TRAVEL")))
-                .andExpect(jsonPath("$.detectionDetails.distanceKm", greaterThan(13000.0)))
-                .andExpect(jsonPath("$.detectionDetails.action", is("BLOCKED")));
+                .andExpect(jsonPath("$.verificationRequired", is(true)))
+                .andExpect(jsonPath("$.sessionToken").doesNotExist());
     }
 
     @Test
@@ -123,9 +136,9 @@ class ImpossibleTravelIntegrationTest {
     void testDashboardStatsReflected() throws Exception {
         mockMvc.perform(get("/api/dashboard/summary"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalLogins", greaterThanOrEqualTo(2)))
+                .andExpect(jsonPath("$.totalLogins", greaterThanOrEqualTo(1)))
                 .andExpect(jsonPath("$.allowedLogins", greaterThanOrEqualTo(1)))
-                .andExpect(jsonPath("$.blockedLogins", greaterThanOrEqualTo(1)))
+                .andExpect(jsonPath("$.blockedLogins", is(0)))
                 .andExpect(jsonPath("$.securityAlertsCount", greaterThanOrEqualTo(1)));
     }
 
@@ -137,7 +150,7 @@ class ImpossibleTravelIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalElements", greaterThanOrEqualTo(1)))
                 .andExpect(jsonPath("$.content[0].eventType", is("CONCURRENT_IMPOSSIBLE_TRAVEL")))
-                .andExpect(jsonPath("$.content[0].actionTaken", is("BLOCKED")));
+                .andExpect(jsonPath("$.content[0].actionTaken", is("OTP_PENDING")));
     }
 
     @Test
