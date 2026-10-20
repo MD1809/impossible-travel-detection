@@ -21,27 +21,4 @@ Hệ thống phân tích vị trí IP và thời gian giữa các lần đăng n
 - **Dữ liệu:** MySQL, MaxMind GeoLite2-City.
 - **Kiểm thử:** JUnit 5, Mockito, MockMvc, H2.
 
-## Cấu trúc hệ thống
 
-```mermaid
-flowchart TD
-    User[Người dùng] --> FE[Frontend React<br/>Đăng ký, đăng nhập, nhập OTP, dashboard]
-    FE -->|Yêu cầu HTTP / JSON| BE[Backend Spring Boot<br/>Xác thực, phát hiện bất thường, xử lý OTP]
-    BE -->|Kết quả và dữ liệu hiển thị| FE
-    BE -->|Đọc và ghi qua JPA / JDBC| DB[(MySQL<br/>Tài khoản, phiên, lịch sử, sự kiện, OTP)]
-    DB -->|Dữ liệu đối chiếu| BE
-    BE -->|Tra cứu vị trí IP| GEO[GeoLite2-City.mmdb]
-    GEO -->|Quốc gia, thành phố, tọa độ| BE
-    BE -->|Gửi mã xác minh| MAIL[Gmail SMTP]
-    MAIL -->|Email chứa OTP| User
-```
-
-Frontend gửi yêu cầu đến backend; backend đối chiếu vị trí và lịch sử trong cơ sở dữ liệu. Nếu đăng nhập bất thường, backend yêu cầu OTP qua email trước khi cấp phiên. Kết quả được trả về frontend và cập nhật trên dashboard.
-
-## Các trang
-
-- `/login`: đăng ký và đăng nhập demo.
-- `/welcome`: lời chào sau khi đăng nhập thành công.
-- `/admin/dashboard`: dashboard giám sát an ninh.
-
-IP được truyền trực tiếp trong bản demo localhost; GeoLite2 cung cấp vị trí địa lý ước lượng để phục vụ phát hiện bất thường.
